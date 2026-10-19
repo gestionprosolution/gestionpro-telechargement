@@ -1,0 +1,151 @@
+/* GestionPro : même charte que la notice et la plaquette PDF (bleu #1f4e79, Segoe UI, cases grises, encadrés). */
+:root {
+  --bleu: #1f4e79; --bleu-clair: #e8f0f8; --bleu-texte: #c9d8e8;
+  --orange: #d9480f; --orange-clair: #fff1e6; --vert: #2b8a3e; --vert-clair: #ebf7ee;
+  --gris: #5b6472; --gris-clair: #f3f4f6; --bordure: #d5d9e0; --texte: #1a1f2b; --blanc: #fff;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; font-family: "Segoe UI", system-ui, -apple-system, Roboto, sans-serif; color: var(--texte);
+       background: var(--blanc); line-height: 1.55; font-size: 17px; }
+a { color: var(--bleu); }
+img { max-width: 100%; height: auto; display: block; }
+b, strong { font-weight: 600; }
+.conteneur { width: min(1120px, 100% - 32px); margin: 0 auto; }
+
+/* Barre du haut */
+header.barre { position: sticky; top: 0; z-index: 5; background: var(--blanc); border-top: 6px solid var(--bleu);
+               border-bottom: 1px solid var(--bordure); }
+header.barre .conteneur { display: flex; align-items: center; justify-content: space-between; height: 62px; gap: 16px; }
+.marque { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 20px; color: var(--bleu); text-decoration: none; }
+.marque img { width: 34px; height: 34px; }
+nav.liens { display: flex; gap: 22px; font-size: 15px; }
+nav.liens a { color: var(--gris); text-decoration: none; }
+nav.liens a:hover { color: var(--bleu); }
+
+/* Boutons */
+.bouton { display: inline-block; background: var(--bleu); color: var(--blanc); text-decoration: none; font-weight: 600;
+          padding: 11px 22px; border-radius: 6px; border: 2px solid var(--bleu); font-size: 16px; }
+.bouton:hover { filter: brightness(1.12); }
+.bouton.petit { padding: 7px 16px; font-size: 15px; }
+.bouton.blanc { background: var(--blanc); color: var(--bleu); border-color: var(--blanc); }
+.bouton.contour { background: transparent; color: var(--blanc); border-color: var(--bleu-texte); }
+.bouton.contour-bleu { background: transparent; color: var(--bleu); }
+
+/* Accroche : bandeau bleu, comme la couverture */
+.accroche { background: var(--bleu); color: var(--blanc); padding: 64px 0 190px; }
+.accroche h1 { font-size: clamp(40px, 6vw, 60px); font-weight: 600; margin: 0; line-height: 1.1; }
+.accroche .slogan { font-size: clamp(21px, 2.6vw, 28px); font-weight: 300; margin: 8px 0 6px; }
+.accroche .sous-titre { color: var(--bleu-texte); margin: 0 0 28px; }
+.accroche .actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.capture-principale { margin-top: -160px; }
+.capture-principale img { border: 1px solid var(--bordure); box-shadow: 0 18px 50px rgba(0, 0, 0, .18); }
+
+/* Quatre promesses sous la capture */
+.promesses { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; padding: 32px 0 8px; }
+.promesses h3 { color: var(--bleu); font-weight: 600; font-size: 18px; margin: 0 0 2px; }
+.promesses p { color: var(--gris); font-size: 15px; margin: 0; }
+
+/* Sections */
+section.bloc { padding: 64px 0; }
+section.bloc.gris { background: var(--gris-clair); }
+h2 { color: var(--bleu); font-weight: 600; font-size: clamp(26px, 3.3vw, 34px); line-height: 1.2; margin: 0 0 6px; }
+h2.sous { font-size: clamp(21px, 2.5vw, 25px); margin-top: 48px; }
+.chapo { color: var(--gris); font-weight: 300; font-size: 19px; margin: 0 0 28px; max-width: 760px; }
+
+/* Cases (grilles de blocs titre + texte) */
+.cases { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; }
+.cases.trois { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.cases > div { background: var(--gris-clair); padding: 18px 20px; }
+section.gris .cases > div { background: var(--blanc); }
+.cases h3 { color: var(--bleu); font-weight: 600; font-size: 17px; margin: 0 0 4px; }
+.cases p { margin: 0; font-size: 15px; }
+.cases.organisation { margin-top: 56px; gap: 16px; }
+.cases.organisation img { border: 1px solid var(--bordure); margin-bottom: 14px; }
+
+/* Parcours en six étapes */
+.parcours { list-style: none; padding: 0; margin: 20px 0 0; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr));
+            gap: 12px; text-align: center; }
+.parcours span { display: grid; place-items: center; width: 34px; height: 34px; margin: 0 auto 6px; border-radius: 50%;
+                 background: var(--bleu); color: var(--blanc); font-weight: 700; }
+.parcours strong { display: block; }
+.parcours small { color: var(--gris); font-size: 14px; }
+
+/* Texte + image */
+.demo { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 44px; align-items: center; margin-bottom: 64px; }
+.demo:last-child { margin-bottom: 0; }
+.demo.inverse .texte { order: 2; }
+.demo ul { padding-left: 20px; margin: 12px 0 0; }
+.demo li { margin-bottom: 7px; }
+figure { margin: 0; }
+figure img { border: 1px solid var(--bordure); box-shadow: 2px 2px 0 #e6e8ec; }
+figure.papier { max-width: 380px; justify-self: center; }
+figcaption { color: var(--gris); font-style: italic; font-size: 14px; text-align: center; margin-top: 8px; }
+
+/* Encadrés (comme dans les PDF) */
+.encadre { border-left: 4px solid var(--bleu); background: var(--bleu-clair); padding: 14px 18px; margin-top: 24px; font-size: 15.5px; }
+.encadre strong { display: block; color: var(--bleu); margin-bottom: 2px; }
+.encadre.bon { border-color: var(--vert); background: var(--vert-clair); }
+.encadre.bon strong { color: var(--vert); }
+.encadre.important { border-color: var(--orange); background: var(--orange-clair); }
+.encadre.important strong { color: var(--orange); }
+
+/* Tableaux */
+table { border-collapse: collapse; width: 100%; font-size: 15.5px; }
+th, td { border: 1px solid var(--bordure); padding: 10px 14px; text-align: left; vertical-align: top; }
+table.calendrier { margin-bottom: 36px; }
+table.calendrier th { background: var(--bleu-clair); width: 210px; font-weight: 600; }
+table.comparaison thead th { background: var(--bleu); color: var(--blanc); font-weight: 600; }
+table.comparaison td:nth-child(2) { background: var(--vert-clair); font-weight: 600; }
+table.comparaison td:first-child { color: var(--gris); }
+.defile { overflow-x: auto; }
+
+/* Tarif */
+.tarif { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr); border: 2px solid var(--bleu); margin-top: 40px; }
+.tarif .offre { background: var(--bleu-clair); padding: 28px; text-align: center; display: flex; flex-direction: column; justify-content: center; }
+.tarif .prix { color: var(--bleu); font-size: 52px; font-weight: 600; line-height: 1.15; margin: 6px 0 2px; }
+.tarif small { color: var(--gris); }
+.tarif .lancement { color: var(--orange); margin: 12px 0 0; font-size: 15px; }
+.tarif .lancement:empty { display: none; }
+.tarif ul { list-style: none; margin: 0; padding: 24px 28px; }
+.tarif li { padding: 5px 0 5px 26px; position: relative; font-size: 16px; }
+.tarif li::before { content: "✓"; position: absolute; left: 2px; color: var(--vert); font-weight: 700; }
+.tarif li.gris { color: var(--gris); font-size: 15px; }
+.tarif li.gris::before { content: ""; }
+
+/* Téléchargements */
+.telechargements > div { display: flex; flex-direction: column; gap: 8px; }
+.telechargements .bouton { align-self: flex-start; margin-top: auto; }
+
+/* Contact */
+.contact { background: var(--bleu); color: var(--blanc); text-align: center; padding: 64px 0; }
+.contact h2 { color: var(--blanc); }
+.contact p { color: var(--bleu-texte); margin: 0 auto 24px; }
+.contact .coordonnees { margin: 20px 0 0; font-size: 18px; }
+.contact .coordonnees a { color: var(--blanc); }
+
+footer { border-top: 1px solid var(--bordure); padding: 22px 0; color: var(--gris); font-size: 14px; }
+footer .conteneur { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+footer a { color: var(--gris); }
+
+/* Page de texte (mentions légales) */
+.page-texte { padding: 48px 0 64px; max-width: 820px; }
+.page-texte h2 { font-size: 22px; margin-top: 32px; }
+.page-texte .a-remplir { background: #fff7d6; padding: 0 4px; }
+
+@media (max-width: 900px) {
+  nav.liens { display: none; }
+  .promesses { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .cases, .cases.trois, .tarif, .demo { grid-template-columns: 1fr; }
+  .demo { gap: 24px; }
+  .demo.inverse .texte { order: 0; }
+  .parcours { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 20px; }
+  .accroche { padding-bottom: 120px; }
+  .capture-principale { margin-top: -96px; }
+  table.calendrier th { width: auto; }
+}
+@media (max-width: 520px) {
+  header.barre .bouton { display: none; }
+  .promesses { grid-template-columns: 1fr; }
+  .parcours { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
