@@ -121,15 +121,35 @@ table.comparaison td:first-child { color: var(--gris); }
 .contact { background: var(--bleu); color: var(--blanc); text-align: center; padding: 64px 0; }
 .contact h2 { color: var(--blanc); }
 .contact p { color: var(--bleu-texte); margin: 0 auto 24px; }
-.carte-contact { max-width: 620px; margin: 0 auto; }
-.adresse-mail { display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap;
-                background: rgba(255, 255, 255, .1); border: 1px solid rgba(255, 255, 255, .25); padding: 14px 18px; }
-.adresse-mail span { font-size: 21px; font-weight: 600; color: var(--blanc); user-select: all; }
-.adresse-mail .bouton { background: var(--blanc); color: var(--bleu); border-color: var(--blanc); cursor: pointer; font-family: inherit; }
-.contact .choix-titre { margin: 22px 0 10px; }
-.choix-messagerie { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
-.contact .telephone { margin: 22px 0 0; font-size: 18px; }
-.contact .telephone a { color: var(--blanc); font-weight: 600; }
+.contact .coordonnees { margin: 20px 0 0; font-size: 17px; }
+.contact .coordonnees a { color: var(--blanc); }
+
+/* Fenêtre « Demander une démonstration » */
+dialog#fenetre-demo { border: 0; padding: 0; width: min(640px, 100% - 24px); border-top: 6px solid var(--bleu);
+                      box-shadow: 0 20px 60px rgba(0, 0, 0, .3); color: var(--texte); }
+dialog#fenetre-demo::backdrop { background: rgba(26, 31, 43, .55); }
+#form-demo { padding: 22px 24px 20px; }
+.fenetre-entete { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.fenetre-entete h2 { font-size: 24px; margin: 0; }
+.fermer { border: 0; background: none; font-size: 28px; line-height: 1; color: var(--gris); cursor: pointer; }
+#form-demo .aide { color: var(--gris); font-size: 15px; margin: 8px 0 14px; }
+#form-demo .aide.petit { font-size: 13px; margin: 12px 0 0; }
+.champs { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 14px; }
+.champs label { display: flex; flex-direction: column; gap: 4px; font-size: 14px; font-weight: 600; }
+.champs label.large { grid-column: 1 / -1; }
+.champs em { font-weight: 400; font-style: normal; color: var(--gris); }
+.champs input, .champs textarea { font: inherit; font-size: 15px; font-weight: 400; padding: 9px 11px;
+                                  border: 1px solid var(--bordure); border-radius: 6px; width: 100%; }
+.champs input:focus, .champs textarea:focus { outline: 2px solid var(--bleu); outline-offset: 0; border-color: var(--bleu); }
+.piege { position: absolute; left: -9999px; }
+.message-envoi { margin: 12px 0 0; font-size: 15px; }
+.message-envoi:empty { display: none; }
+.message-envoi.ok { background: var(--vert-clair); border-left: 4px solid var(--vert); padding: 10px 14px; }
+.message-envoi.erreur { background: var(--orange-clair); border-left: 4px solid var(--orange); padding: 10px 14px; }
+.fenetre-pied { display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px; }
+.fenetre-pied .bouton { cursor: pointer; font-family: inherit; }
+.fenetre-pied .bouton:disabled { opacity: .6; cursor: wait; }
+@media (max-width: 520px) { .champs { grid-template-columns: 1fr; } }
 
 footer { border-top: 1px solid var(--bordure); padding: 22px 0; color: var(--gris); font-size: 14px; }
 footer .conteneur { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }

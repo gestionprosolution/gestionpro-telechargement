@@ -28,7 +28,7 @@
       <a href="#tarif">Tarif</a>
       <a href="#telecharger">Télécharger</a>
     </nav>
-    <a class="bouton petit" href="#contact">Demander une démo</a>
+    <a class="bouton petit ouvrir-demo" href="#contact">Demander une démo</a>
   </div>
 </header>
 
@@ -39,7 +39,7 @@
     <p class="slogan">Moins de paperasse, plus de temps pour votre métier.</p>
     <p class="sous-titre">Le logiciel de devis et de factures des artisans et des petites entreprises.</p>
     <div class="actions">
-      <a class="bouton blanc" href="#contact">Demander une démonstration</a>
+      <a class="bouton blanc ouvrir-demo" href="#contact">Demander une démonstration</a>
       <a class="bouton contour" href="documents/GestionPro-Presentation.pdf" target="_blank">Lire la présentation (PDF)</a>
     </div>
   </div>
@@ -247,21 +247,40 @@
   <div class="conteneur">
     <h2>Parlons de votre entreprise</h2>
     <p>Une démonstration de quelques minutes, avec vos propres exemples de devis.</p>
-    <div class="carte-contact">
-      <div class="adresse-mail">
-        <span id="adresse"></span>
-        <button type="button" class="bouton petit" id="copier">Copier l'adresse</button>
-      </div>
-      <p class="choix-titre">Écrire directement depuis :</p>
-      <div class="choix-messagerie">
-        <a class="bouton blanc" id="via-gmail" target="_blank" rel="noopener">Gmail</a>
-        <a class="bouton blanc" id="via-outlook" target="_blank" rel="noopener">Outlook / Hotmail</a>
-        <a class="bouton contour" id="via-autre">Autre messagerie</a>
-      </div>
-      <p class="telephone" id="telephone"></p>
-    </div>
+    <a class="bouton blanc ouvrir-demo" href="#contact">Demander une démonstration</a>
+    <p class="coordonnees" id="coordonnees"></p>
   </div>
 </section>
+
+<!-- Formulaire de demande de démonstration (envoyé par e-mail via FormSubmit) -->
+<dialog id="fenetre-demo">
+  <form id="form-demo">
+    <div class="fenetre-entete">
+      <h2>Demander une démonstration</h2>
+      <button type="button" class="fermer" data-fermer aria-label="Fermer">×</button>
+    </div>
+    <p class="aide">Laissez vos coordonnées : je vous rappelle pour convenir d'un rendez-vous, chez vous ou à
+      l'atelier. Gratuit et sans engagement.</p>
+    <div class="champs">
+      <label>Votre nom<input name="Nom" required autocomplete="name"></label>
+      <label>Nom de l'entreprise<input name="Entreprise" autocomplete="organization"></label>
+      <label>Votre métier<input name="Métier" placeholder="Plombier, électricien, paysagiste…"></label>
+      <label>Ville<input name="Ville" autocomplete="address-level2"></label>
+      <label>Téléphone<input name="Téléphone" type="tel" required autocomplete="tel"></label>
+      <label><span>E-mail <em>(facultatif)</em></span><input name="email" type="email" autocomplete="email"></label>
+      <label class="large"><span>Message <em>(facultatif)</em></span>
+        <textarea name="Message" rows="3" placeholder="Vos disponibilités, vos questions…"></textarea></label>
+    </div>
+    <input type="text" name="_honey" class="piege" tabindex="-1" autocomplete="off" aria-hidden="true">
+    <p class="aide petit">Vos informations servent uniquement à vous recontacter (voir les
+      <a href="mentions-legales.html" target="_blank">mentions légales</a>).</p>
+    <p class="message-envoi" id="message-envoi" role="status"></p>
+    <div class="fenetre-pied">
+      <button type="button" class="bouton contour-bleu" data-fermer>Annuler</button>
+      <button class="bouton" id="envoyer-demo">Envoyer ma demande</button>
+    </div>
+  </form>
+</dialog>
 
 <footer>
   <div class="conteneur">
@@ -294,27 +313,47 @@
   }
   if (LIEN_INSTALLATEUR) $("#lien-installateur").href = LIEN_INSTALLATEUR;
 
-  // Contact : un simple lien mailto ne fait rien quand aucune messagerie n'est installée sur l'ordinateur
-  // (cas courant avec Gmail utilisé dans le navigateur) : on propose donc aussi Gmail et Outlook en ligne.
-  const OBJET = "Démonstration de GestionPro";
-  const TEXTE = "Bonjour,\n\nJe souhaite une démonstration de GestionPro.\n\nMon métier : \nMon téléphone : \n";
-  const enc = encodeURIComponent;
-  $("#adresse").textContent = CONTACT;
-  $("#via-gmail").href = `https://mail.google.com/mail/?view=cm&fs=1&to=${enc(CONTACT)}&su=${enc(OBJET)}&body=${enc(TEXTE)}`;
-  $("#via-outlook").href = `https://outlook.live.com/mail/0/deeplink/compose?to=${enc(CONTACT)}&subject=${enc(OBJET)}&body=${enc(TEXTE)}`;
-  $("#via-autre").href = `mailto:${CONTACT}?subject=${enc(OBJET)}&body=${enc(TEXTE)}`;
-  $("#copier").addEventListener("click", async () => {
+  const coordonnees = [TELEPHONE && `<a href="tel:${TELEPHONE.replace(/\s/g, "")}">${TELEPHONE}</a>`,
+                       CONTACT && `<a href="mailto:${CONTACT}">${CONTACT}</a>`].filter(Boolean);
+  $("#coordonnees").innerHTML = coordonnees.length ? "Ou directement : " + coordonnees.join(" · ") : "";
+
+  // Formulaire de démonstration : envoyé à CONTACT par FormSubmit (service gratuit, sans compte).
+  // Au tout premier envoi, FormSubmit envoie un e-mail d'activation à CONTACT : cliquer sur le lien qu'il contient.
+  const fenetre = $("#fenetre-demo"), formDemo = $("#form-demo"), messageEnvoi = $("#message-envoi");
+  document.querySelectorAll(".ouvrir-demo").forEach((b) => b.addEventListener("click", (e) => {
+    if (!fenetre.showModal) return;   // très vieux navigateur : le lien descend simplement au contact
+    e.preventDefault();
+    messageEnvoi.textContent = ""; messageEnvoi.className = "message-envoi";
+    fenetre.showModal();
+  }));
+  fenetre.querySelectorAll("[data-fermer]").forEach((b) => b.addEventListener("click", () => fenetre.close()));
+  fenetre.addEventListener("click", (e) => { if (e.target === fenetre) fenetre.close(); });
+  formDemo.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const donnees = Object.fromEntries(new FormData(formDemo));
+    if (donnees._honey) return;   // rempli seulement par les robots
+    delete donnees._honey;
+    donnees._subject = `Demande de démonstration : ${donnees.Entreprise || donnees.Nom}`;
+    donnees._template = "table";
+    $("#envoyer-demo").disabled = true;
+    messageEnvoi.className = "message-envoi"; messageEnvoi.textContent = "Envoi en cours…";
     try {
-      await navigator.clipboard.writeText(CONTACT);
+      const r = await fetch(`https://formsubmit.co/ajax/${CONTACT}`, {
+        method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify(donnees) });
+      const rep = await r.json().catch(() => ({}));
+      if (!r.ok || String(rep.success) !== "true") throw new Error(rep.message || "envoi impossible");
+      formDemo.reset();
+      messageEnvoi.className = "message-envoi ok";
+      messageEnvoi.textContent = "Merci, votre demande est bien envoyée : je vous rappelle rapidement.";
     } catch {
-      const r = document.createRange(); r.selectNodeContents($("#adresse"));
-      getSelection().removeAllRanges(); getSelection().addRange(r); document.execCommand("copy");
+      messageEnvoi.className = "message-envoi erreur";
+      messageEnvoi.innerHTML = `L'envoi n'a pas fonctionné. Vous pouvez m'appeler au ${TELEPHONE} ou écrire à `
+        + `<a href="mailto:${CONTACT}">${CONTACT}</a>.`;
+    } finally {
+      $("#envoyer-demo").disabled = false;
     }
-    $("#copier").textContent = "Adresse copiée ✓";
-    setTimeout(() => ($("#copier").textContent = "Copier l'adresse"), 2500);
   });
-  $("#telephone").innerHTML = TELEPHONE
-    ? `Ou par téléphone : <a href="tel:${TELEPHONE.replace(/\s/g, "")}">${TELEPHONE}</a>` : "";
 </script>
 </body>
 </html>
