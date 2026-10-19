@@ -121,8 +121,15 @@ table.comparaison td:first-child { color: var(--gris); }
 .contact { background: var(--bleu); color: var(--blanc); text-align: center; padding: 64px 0; }
 .contact h2 { color: var(--blanc); }
 .contact p { color: var(--bleu-texte); margin: 0 auto 24px; }
-.contact .coordonnees { margin: 20px 0 0; font-size: 18px; }
-.contact .coordonnees a { color: var(--blanc); }
+.carte-contact { max-width: 620px; margin: 0 auto; }
+.adresse-mail { display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap;
+                background: rgba(255, 255, 255, .1); border: 1px solid rgba(255, 255, 255, .25); padding: 14px 18px; }
+.adresse-mail span { font-size: 21px; font-weight: 600; color: var(--blanc); user-select: all; }
+.adresse-mail .bouton { background: var(--blanc); color: var(--bleu); border-color: var(--blanc); cursor: pointer; font-family: inherit; }
+.contact .choix-titre { margin: 22px 0 10px; }
+.choix-messagerie { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.contact .telephone { margin: 22px 0 0; font-size: 18px; }
+.contact .telephone a { color: var(--blanc); font-weight: 600; }
 
 footer { border-top: 1px solid var(--bordure); padding: 22px 0; color: var(--gris); font-size: 14px; }
 footer .conteneur { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }

@@ -247,8 +247,19 @@
   <div class="conteneur">
     <h2>Parlons de votre entreprise</h2>
     <p>Une démonstration de quelques minutes, avec vos propres exemples de devis.</p>
-    <a class="bouton blanc" id="bouton-contact" href="#contact">Demander une démonstration</a>
-    <p class="coordonnees" id="coordonnees"></p>
+    <div class="carte-contact">
+      <div class="adresse-mail">
+        <span id="adresse"></span>
+        <button type="button" class="bouton petit" id="copier">Copier l'adresse</button>
+      </div>
+      <p class="choix-titre">Écrire directement depuis :</p>
+      <div class="choix-messagerie">
+        <a class="bouton blanc" id="via-gmail" target="_blank" rel="noopener">Gmail</a>
+        <a class="bouton blanc" id="via-outlook" target="_blank" rel="noopener">Outlook / Hotmail</a>
+        <a class="bouton contour" id="via-autre">Autre messagerie</a>
+      </div>
+      <p class="telephone" id="telephone"></p>
+    </div>
   </div>
 </section>
 
@@ -283,13 +294,27 @@
   }
   if (LIEN_INSTALLATEUR) $("#lien-installateur").href = LIEN_INSTALLATEUR;
 
-  const coordonnees = [TELEPHONE && `<a href="tel:${TELEPHONE.replace(/\s/g, "")}">${TELEPHONE}</a>`,
-                       CONTACT && `<a href="mailto:${CONTACT}">${CONTACT}</a>`].filter(Boolean);
-  $("#coordonnees").innerHTML = coordonnees.join(" · ");
-  if (CONTACT) {
-    $("#bouton-contact").href = `mailto:${CONTACT}?subject=${encodeURIComponent("Démonstration de GestionPro")}`
-      + `&body=${encodeURIComponent("Bonjour,\n\nJe souhaite une démonstration de GestionPro.\n\nMon métier : \nMon téléphone : \n")}`;
-  }
+  // Contact : un simple lien mailto ne fait rien quand aucune messagerie n'est installée sur l'ordinateur
+  // (cas courant avec Gmail utilisé dans le navigateur) : on propose donc aussi Gmail et Outlook en ligne.
+  const OBJET = "Démonstration de GestionPro";
+  const TEXTE = "Bonjour,\n\nJe souhaite une démonstration de GestionPro.\n\nMon métier : \nMon téléphone : \n";
+  const enc = encodeURIComponent;
+  $("#adresse").textContent = CONTACT;
+  $("#via-gmail").href = `https://mail.google.com/mail/?view=cm&fs=1&to=${enc(CONTACT)}&su=${enc(OBJET)}&body=${enc(TEXTE)}`;
+  $("#via-outlook").href = `https://outlook.live.com/mail/0/deeplink/compose?to=${enc(CONTACT)}&subject=${enc(OBJET)}&body=${enc(TEXTE)}`;
+  $("#via-autre").href = `mailto:${CONTACT}?subject=${enc(OBJET)}&body=${enc(TEXTE)}`;
+  $("#copier").addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(CONTACT);
+    } catch {
+      const r = document.createRange(); r.selectNodeContents($("#adresse"));
+      getSelection().removeAllRanges(); getSelection().addRange(r); document.execCommand("copy");
+    }
+    $("#copier").textContent = "Adresse copiée ✓";
+    setTimeout(() => ($("#copier").textContent = "Copier l'adresse"), 2500);
+  });
+  $("#telephone").innerHTML = TELEPHONE
+    ? `Ou par téléphone : <a href="tel:${TELEPHONE.replace(/\s/g, "")}">${TELEPHONE}</a>` : "";
 </script>
 </body>
 </html>
