@@ -179,3 +179,17 @@ footer a { color: var(--gris); }
 }
 
 footer .liens-pied a { color: var(--gris); }
+
+/* Choix de la version à télécharger */
+dialog#fenetre-version { border: 0; padding: 0; width: min(620px, 100% - 24px); border-top: 6px solid var(--bleu);
+                         box-shadow: 0 20px 60px rgba(0, 0, 0, .3); color: var(--texte); }
+dialog#fenetre-version::backdrop { background: rgba(26, 31, 43, .55); }
+.fenetre-choix { padding: 22px 24px 24px; }
+.fenetre-choix .aide { color: var(--gris); font-size: 15px; margin: 8px 0 16px; }
+.choix-versions { display: grid; gap: 12px; }
+.choix-versions .version { display: grid; gap: 4px; padding: 16px 18px; border: 2px solid var(--bordure); border-radius: 8px;
+                           text-decoration: none; color: var(--texte); background: var(--gris-clair); }
+.choix-versions .version:hover { border-color: var(--bleu); background: var(--bleu-clair); }
+.choix-versions .version strong { color: var(--bleu); font-size: 18px; }
+.choix-versions .version span { font-size: 15px; }
+.choix-versions .version em { font-style: normal; font-weight: 600; color: var(--bleu); font-size: 15px; margin-top: 4px; }

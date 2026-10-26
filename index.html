@@ -13,7 +13,7 @@
 <!--
   ═══════════════════════════════════════════════════════════════════════════════
    À COMPLÉTER AVANT LA MISE EN LIGNE : tout se règle dans le petit script en bas
-   de cette page (CONTACT, TELEPHONE, LIEN_INSTALLATEUR, PRIX…), et vos
+   de cette page (CONTACT, TELEPHONE, VERSIONS, PRIX…), et vos
    informations dans mentions-legales.html.
   ═══════════════════════════════════════════════════════════════════════════════
 -->
@@ -231,8 +231,9 @@
     <h2>Télécharger</h2>
     <p class="chapo">Le logiciel s'active avec la clé de licence que vous recevez après l'achat.</p>
     <div class="cases deux telechargements">
-      <div><h3>GestionPro pour Windows</h3><p>Dernière version · Windows 10 ou 11 · environ 27 Mo.</p>
-        <a class="bouton" id="lien-installateur" href="#contact">Télécharger l'installateur</a></div>
+      <div><h3>GestionPro pour Windows</h3><p>Deux versions : artisans et commerçants, ou maisons d'édition ·
+        Windows 10 ou 11 · environ 27 Mo.</p>
+        <a class="bouton" id="lien-installateur" href="#telecharger">Télécharger l'installateur</a></div>
       <div><h3>Guide d'installation</h3><p>L'installation étape par étape, en images · PDF, 5 minutes.</p>
         <a class="bouton contour-bleu" href="documents/GestionPro-Guide-installation.pdf" target="_blank">Lire le guide d'installation</a></div>
       <div><h3>Guide d'utilisation</h3><p>Chaque écran du logiciel expliqué · PDF, 42 pages.</p>
@@ -252,6 +253,18 @@
     <p class="coordonnees" id="coordonnees"></p>
   </div>
 </section>
+
+<!-- Choix de la version à télécharger -->
+<dialog id="fenetre-version">
+  <div class="fenetre-choix">
+    <div class="fenetre-entete">
+      <h2>Quelle version de GestionPro ?</h2>
+      <button type="button" class="fermer" data-fermer aria-label="Fermer">×</button>
+    </div>
+    <p class="aide">Choisissez celle qui correspond à votre activité. Le guide d'installation vaut pour les deux.</p>
+    <div class="choix-versions" id="choix-versions"></div>
+  </div>
+</dialog>
 
 <!-- Formulaire de demande de démonstration (envoyé par e-mail via Web3Forms) -->
 <dialog id="fenetre-demo">
@@ -294,8 +307,16 @@
   // ─── À COMPLÉTER ──────────────────────────────────────────────────────────────
   const CONTACT = "gestionpro.solution@gmail.com";
   const TELEPHONE = "06 95 55 80 04";
-  // Toujours la dernière version publiée sur GitHub (fichier « GestionPro-Installation.exe » de chaque version)
-  const LIEN_INSTALLATEUR = "https://github.com/gestionprosolution/gestionpro-telechargement/releases/latest/download/GestionPro-Installation.exe";
+  // Versions proposées au téléchargement (fichiers publiés sur GitHub)
+  const DEPOT = "https://github.com/gestionprosolution/gestionpro-telechargement/releases";
+  const VERSIONS = [
+    { nom: "Artisans et commerçants", version: "1.2.2",
+      detail: "Devis, factures, relances, stock, agenda : la version pour les artisans, commerçants et prestataires.",
+      lien: `${DEPOT}/latest/download/GestionPro-Installation.exe` },
+    { nom: "Maisons d'édition", version: "1.2.3",
+      detail: "Tout GestionPro, plus le stock en dépôt chez les libraires, les relevés de ventes et l'ISBN / EAN des titres.",
+      lien: `${DEPOT}/download/v1.2.3/GestionPro-Installation-Edition-1.2.3.exe` },
+  ];
   const PRIX = "xxx € / an";
   const MENTION_PRIX = "TVA non applicable, art. 293 B du CGI";
   const PRIX_LANCEMENT = "xxx €";  // prix de la première année en offre de lancement (vide : pas d'offre)
@@ -310,7 +331,21 @@
   $("#mention-prix").textContent = MENTION_PRIX;
   $("#lancement").innerHTML = PRIX_LANCEMENT
     ? `<b>Offre de lancement : ${PRIX_LANCEMENT}</b> la première année, pour les premières entreprises équipées` : "";
-  if (LIEN_INSTALLATEUR) $("#lien-installateur").href = LIEN_INSTALLATEUR;
+  // « Télécharger l'installateur » : choix de la version
+  const fenetreVersion = $("#fenetre-version");
+  $("#choix-versions").innerHTML = VERSIONS.map((v) => `<a class="version" href="${v.lien}">
+      <strong>${v.nom}</strong><span>${v.detail}</span>
+      <em>Version ${v.version} · Télécharger</em></a>`).join("");
+  $("#lien-installateur").addEventListener("click", (e) => {
+    if (!fenetreVersion.showModal) return;
+    e.preventDefault();
+    fenetreVersion.showModal();
+  });
+  fenetreVersion.querySelector("[data-fermer]").addEventListener("click", () => fenetreVersion.close());
+  fenetreVersion.addEventListener("click", (e) => {
+    if (e.target === fenetreVersion) fenetreVersion.close();
+    else if (e.target.closest(".version")) setTimeout(() => fenetreVersion.close(), 300);
+  });
 
   const coordonnees = [TELEPHONE && `<a href="tel:${TELEPHONE.replace(/\s/g, "")}">${TELEPHONE}</a>`,
                        CONTACT && `<a href="mailto:${CONTACT}">${CONTACT}</a>`].filter(Boolean);
