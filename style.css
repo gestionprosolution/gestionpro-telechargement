@@ -193,3 +193,5 @@ dialog#fenetre-version::backdrop { background: rgba(26, 31, 43, .55); }
 .choix-versions .version strong { color: var(--bleu); font-size: 18px; }
 .choix-versions .version span { font-size: 15px; }
 .choix-versions .version em { font-style: normal; font-weight: 600; color: var(--bleu); font-size: 15px; margin-top: 4px; }
+.telechargements .boutons-mac { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; }
+.telechargements .boutons-mac .bouton { margin-top: 0; }

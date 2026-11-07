@@ -229,12 +229,16 @@
 <section class="bloc gris" id="telecharger">
   <div class="conteneur">
     <h2>Télécharger</h2>
-    <p class="chapo">Le logiciel s'active avec la clé de licence que vous recevez après l'achat.</p>
+    <p class="chapo">Installez GestionPro, puis demandez votre licence depuis le logiciel : elle s'active toute seule.</p>
     <div class="cases deux telechargements">
       <div><h3>GestionPro pour Windows</h3><p>Deux versions : artisans et commerçants, ou maisons d'édition ·
         Windows 10 ou 11 · environ 27 Mo.</p>
-        <a class="bouton" id="lien-installateur" href="#telecharger">Télécharger l'installateur</a></div>
-      <div><h3>Guide d'installation</h3><p>L'installation étape par étape, en images · PDF, 5 minutes.</p>
+        <a class="bouton" id="lien-installateur" href="#telecharger">Télécharger pour Windows</a></div>
+      <div><h3>GestionPro pour Mac</h3><p>Version maisons d'édition · macOS 11 ou plus récent. Votre Mac a une puce
+        Apple ou un processeur Intel ? Menu Pomme &gt; À propos de ce Mac.</p>
+        <div class="boutons-mac"><a class="bouton" id="lien-mac-apple" href="#telecharger">Mac à puce Apple (M1, M2…)</a>
+        <a class="bouton contour-bleu" id="lien-mac-intel" href="#telecharger">Mac Intel</a></div></div>
+      <div><h3>Guide d'installation</h3><p>L'installation sur Windows et sur Mac, puis les profils et le réseau du bureau · PDF, en images.</p>
         <a class="bouton contour-bleu" href="documents/GestionPro-Guide-installation.pdf" target="_blank">Lire le guide d'installation</a></div>
       <div><h3>Guide d'utilisation</h3><p>Chaque écran du logiciel expliqué · PDF, 42 pages.</p>
         <a class="bouton contour-bleu" href="documents/GestionPro-Guide-utilisation.pdf" target="_blank">Lire le guide d'utilisation</a></div>
@@ -313,10 +317,13 @@
     { nom: "Artisans et commerçants", version: "1.2.2",
       detail: "Devis, factures, relances, stock, agenda : la version pour les artisans, commerçants et prestataires.",
       lien: `${DEPOT}/latest/download/GestionPro-Installation.exe` },
-    { nom: "Maisons d'édition", version: "1.4.2",
+    { nom: "Maisons d'édition", version: "1.5.0",
       detail: "Tout GestionPro, plus le stock en dépôt chez les libraires, les relevés de ventes, l'ISBN / EAN des titres et les bons de commande.",
-      lien: `${DEPOT}/download/edition-v1.4.2/GestionPro-Installation-Edition-1.4.2.exe` },
+      lien: `${DEPOT}/download/edition-v1.5.0/GestionPro-Installation-Edition-1.5.0.exe` },
   ];
+  // Mac (version maisons d'édition) : une image disque par processeur
+  const VERSION_MAC = "1.5.0";
+  const MAC = (processeur) => `${DEPOT}/download/edition-v${VERSION_MAC}/GestionPro-Mac-Edition-${VERSION_MAC}-${processeur}.dmg`;
   const PRIX = "xxx € / an";
   const MENTION_PRIX = "TVA non applicable, art. 293 B du CGI";
   const PRIX_LANCEMENT = "xxx €";  // prix de la première année en offre de lancement (vide : pas d'offre)
@@ -336,6 +343,8 @@
   $("#choix-versions").innerHTML = VERSIONS.map((v) => `<a class="version" href="${v.lien}">
       <strong>${v.nom}</strong><span>${v.detail}</span>
       <em>Version ${v.version} · Télécharger</em></a>`).join("");
+  $("#lien-mac-apple").href = MAC("AppleSilicon");
+  $("#lien-mac-intel").href = MAC("Intel");
   $("#lien-installateur").addEventListener("click", (e) => {
     if (!fenetreVersion.showModal) return;
     e.preventDefault();
