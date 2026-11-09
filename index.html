@@ -13,7 +13,7 @@
 <!--
   ═══════════════════════════════════════════════════════════════════════════════
    À COMPLÉTER AVANT LA MISE EN LIGNE : tout se règle dans le petit script en bas
-   de cette page (CONTACT, TELEPHONE, VERSIONS, PRIX…), et vos
+   de cette page (CONTACT, TELEPHONE, VERSION, PRIX…), et vos
    informations dans mentions-legales.html.
   ═══════════════════════════════════════════════════════════════════════════════
 -->
@@ -231,10 +231,9 @@
     <h2>Télécharger</h2>
     <p class="chapo">Installez GestionPro, puis demandez votre licence depuis le logiciel : elle s'active toute seule.</p>
     <div class="cases deux telechargements">
-      <div><h3>GestionPro pour Windows</h3><p>Deux versions : artisans et commerçants, ou maisons d'édition ·
-        Windows 10 ou 11 · environ 27 Mo.</p>
+      <div><h3>GestionPro pour Windows</h3><p>Windows 10 ou 11 · environ 30 Mo · <span class="version-actuelle"></span></p>
         <a class="bouton" id="lien-installateur" href="#telecharger">Télécharger pour Windows</a></div>
-      <div><h3>GestionPro pour Mac</h3><p>Version maisons d'édition · macOS 11 ou plus récent. Votre Mac a une puce
+      <div><h3>GestionPro pour Mac</h3><p>macOS 11 ou plus récent · <span class="version-actuelle"></span>. Votre Mac a une puce
         Apple ou un processeur Intel ? Menu Pomme &gt; À propos de ce Mac.</p>
         <div class="boutons-mac"><a class="bouton" id="lien-mac-apple" href="#telecharger">Mac à puce Apple (M1, M2…)</a>
         <a class="bouton contour-bleu" id="lien-mac-intel" href="#telecharger">Mac Intel</a></div></div>
@@ -257,18 +256,6 @@
     <p class="coordonnees" id="coordonnees"></p>
   </div>
 </section>
-
-<!-- Choix de la version à télécharger -->
-<dialog id="fenetre-version">
-  <div class="fenetre-choix">
-    <div class="fenetre-entete">
-      <h2>Quelle version de GestionPro ?</h2>
-      <button type="button" class="fermer" data-fermer aria-label="Fermer">×</button>
-    </div>
-    <p class="aide">Choisissez celle qui correspond à votre activité. Le guide d'installation vaut pour les deux.</p>
-    <div class="choix-versions" id="choix-versions"></div>
-  </div>
-</dialog>
 
 <!-- Formulaire de demande de démonstration (envoyé par e-mail via Web3Forms) -->
 <dialog id="fenetre-demo">
@@ -311,19 +298,13 @@
   // ─── À COMPLÉTER ──────────────────────────────────────────────────────────────
   const CONTACT = "gestionpro.solution@gmail.com";
   const TELEPHONE = "06 95 55 80 04";
-  // Versions proposées au téléchargement (fichiers publiés sur GitHub)
+  // Fichiers publiés sur GitHub
   const DEPOT = "https://github.com/gestionprosolution/gestionpro-telechargement/releases";
-  const VERSIONS = [
-    { nom: "Artisans et commerçants", version: "1.2.2",
-      detail: "Devis, factures, relances, stock, agenda : la version pour les artisans, commerçants et prestataires.",
-      lien: `${DEPOT}/latest/download/GestionPro-Installation.exe` },
-    { nom: "Maisons d'édition", version: "1.5.1",
-      detail: "Tout GestionPro, plus le stock en dépôt chez les libraires, les relevés de ventes, l'ISBN / EAN des titres et les bons de commande.",
-      lien: `${DEPOT}/download/edition-v1.5.1/GestionPro-Installation-Edition-1.5.1.exe` },
-  ];
-  // Mac (version maisons d'édition) : une image disque par processeur
-  const VERSION_MAC = "1.5.1";
-  const MAC = (processeur) => `${DEPOT}/download/edition-v${VERSION_MAC}/GestionPro-Mac-Edition-${VERSION_MAC}-${processeur}.dmg`;
+  // Version proposée au téléchargement. Les fichiers gardent le nom « Edition » : c'est lui que la mise à jour
+  // automatique des logiciels installés reconnaît (ne pas le changer).
+  const VERSION = "1.5.1";
+  const WINDOWS = `${DEPOT}/download/edition-v${VERSION}/GestionPro-Installation-Edition-${VERSION}.exe`;
+  const MAC = (processeur) => `${DEPOT}/download/edition-v${VERSION}/GestionPro-Mac-Edition-${VERSION}-${processeur}.dmg`;
   const PRIX = "xxx € / an";
   const MENTION_PRIX = "TVA non applicable, art. 293 B du CGI";
   const PRIX_LANCEMENT = "xxx €";  // prix de la première année en offre de lancement (vide : pas d'offre)
@@ -338,23 +319,11 @@
   $("#mention-prix").textContent = MENTION_PRIX;
   $("#lancement").innerHTML = PRIX_LANCEMENT
     ? `<b>Offre de lancement : ${PRIX_LANCEMENT}</b> la première année, pour les premières entreprises équipées` : "";
-  // « Télécharger l'installateur » : choix de la version
-  const fenetreVersion = $("#fenetre-version");
-  $("#choix-versions").innerHTML = VERSIONS.map((v) => `<a class="version" href="${v.lien}">
-      <strong>${v.nom}</strong><span>${v.detail}</span>
-      <em>Version ${v.version} · Télécharger</em></a>`).join("");
+  // Téléchargement : une seule version de GestionPro
+  $("#lien-installateur").href = WINDOWS;
   $("#lien-mac-apple").href = MAC("AppleSilicon");
   $("#lien-mac-intel").href = MAC("Intel");
-  $("#lien-installateur").addEventListener("click", (e) => {
-    if (!fenetreVersion.showModal) return;
-    e.preventDefault();
-    fenetreVersion.showModal();
-  });
-  fenetreVersion.querySelector("[data-fermer]").addEventListener("click", () => fenetreVersion.close());
-  fenetreVersion.addEventListener("click", (e) => {
-    if (e.target === fenetreVersion) fenetreVersion.close();
-    else if (e.target.closest(".version")) setTimeout(() => fenetreVersion.close(), 300);
-  });
+  document.querySelectorAll(".version-actuelle").forEach((e) => (e.textContent = `version ${VERSION}`));
 
   const coordonnees = [TELEPHONE && `<a href="tel:${TELEPHONE.replace(/\s/g, "")}">${TELEPHONE}</a>`,
                        CONTACT && `<a href="mailto:${CONTACT}">${CONTACT}</a>`].filter(Boolean);
