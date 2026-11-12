@@ -320,15 +320,14 @@
   const DEPOT = "https://github.com/gestionprosolution/gestionpro-telechargement/releases";
   // Version proposée au téléchargement. Les fichiers gardent le nom « Edition » : c'est lui que la mise à jour
   // automatique des logiciels installés reconnaît (ne pas le changer).
-  const VERSION = "1.6.1";
+  const VERSION = "1.7.0";
   const WINDOWS = `${DEPOT}/download/edition-v${VERSION}/GestionPro-Installation-Edition-${VERSION}.exe`;
   const MAC = (processeur) => `${DEPOT}/download/edition-v${VERSION}/GestionPro-Mac-Edition-${VERSION}-${processeur}.dmg`;
   const PRIX_MOIS = "19 € / mois";
   const PRIX_AN = "190 € / an";        // vide : pas d'offre annuelle
   const MENTION_PRIX = "TVA non applicable, art. 293 B du CGI";
   // Offre pilote (vide : pas d'offre)
-  const OFFRE_PILOTE = "Entreprises pilotes : <b>moitié prix la première année</b> (95 € l'année), pour les 10 premières "
-    + "entreprises, en échange de leurs retours";
+  const OFFRE_PILOTE = "";   // offre de lancement : vue directement avec les clients
   // Clé Web3Forms (gratuite, reçue par e-mail sur web3forms.com) : sans elle, « Demander une démonstration »
   // descend simplement aux coordonnées en bas de page
   const CLE_WEB3FORMS = "0fc3ec8b-8e07-4ad9-80be-9730cf5767da";
@@ -340,6 +339,7 @@
   $("#prix-annuel").innerHTML = PRIX_AN ? `ou <b>${PRIX_AN}</b> (deux mois offerts)` : "";
   $("#mention-prix").textContent = MENTION_PRIX;
   $("#lancement").innerHTML = OFFRE_PILOTE;
+  $("#lancement").hidden = !OFFRE_PILOTE;
   // Téléchargement : une seule version de GestionPro
   $("#lien-installateur").href = WINDOWS;
   $("#lien-mac-apple").href = MAC("AppleSilicon");
