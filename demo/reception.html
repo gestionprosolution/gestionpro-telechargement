@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta name="robots" content="noindex">
+  <script src="demo.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Boîte de réception · GestionPro</title>
+  <link rel="icon" href="icone.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="app">
+<main class="contenu">
+  <header class="entete-page">
+    <div><h1>Boîte de réception</h1>
+      <p>Les factures de vos fournisseurs reçues sur votre plateforme agréée. Acceptées par tous, elles passent
+        dans vos factures fournisseurs, et leurs articles entrent en stock.</p></div>
+    <div class="actions">
+      <span class="aide" id="derniere-releve"></span>
+      <button type="button" class="bouton secondaire" id="relever" hidden>Relever maintenant</button>
+    </div>
+  </header>
+
+  <section class="carte" id="sans-plateforme" hidden>
+    <h2>Aucune plateforme agréée reliée</h2>
+    <p class="aide" style="margin: 6px 0 12px">Pour recevoir ici les factures de vos fournisseurs, reliez votre compte
+      Qonto à GestionPro : Clients &gt; Facture électronique &gt; « Se connecter avec Qonto ».</p>
+    <a class="bouton" href="plateforme.html" id="lien-relier">Relier ma plateforme</a>
+  </section>
+
+  <section class="carte" id="boite">
+    <div class="carte-entete">
+      <div class="segments" id="filtre-reception">
+        <button type="button" class="actif" data-filtre="en_cours">À valider <span class="compteur" id="nb-en-cours"></span></button>
+        <button type="button" data-filtre="acceptee">Acceptées</button>
+        <button type="button" data-filtre="refusee">Refusées</button>
+        <button type="button" data-filtre="">Toutes</button>
+      </div>
+      <span class="aide" id="qui-valide"></span>
+    </div>
+    <p class="message" id="message-reception"></p>
+    <div class="defile">
+      <table class="tableau boite-reception" id="table-reception">
+        <thead><tr><th>Fournisseur</th><th>Facture</th><th class="droite">Échéance</th>
+          <th class="droite">Montant TTC</th><th>Validation</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <p class="vide" id="reception-vide" hidden></p>
+  </section>
+</main>
+
+<!-- Détail du circuit (survol du « i ») -->
+<div class="bulle-circuit" id="bulle-circuit" hidden></div>
+
+<!-- Accepter : la facture à gauche, ses articles à droite (entrent en stock à l'acceptation) -->
+<dialog id="fenetre-accepter" style="width: min(1180px, 96vw)">
+  <form class="fenetre" id="form-accepter" novalidate>
+    <div class="fenetre-entete"><h2 id="titre-accepter">Accepter la facture</h2>
+      <button type="button" class="fermer" data-fermer title="Fermer">×</button></div>
+    <div class="fenetre-corps" style="grid-template-columns: 1.25fr 1fr">
+      <div class="apercu" id="apercu-accepter"></div>
+      <div>
+        <p id="resume-accepter" style="margin-top: 0"></p>
+        <h3 style="margin-top: 16px">Articles de la facture</h3>
+        <p class="aide" id="aide-articles">Indiquez les articles reçus et leurs quantités, tels qu'ils figurent sur la
+          facture. Ils entreront en stock dès que la facture sera acceptée par tous.</p>
+        <div class="articles-facture">
+          <table style="width: 100%"><tbody id="lignes-accepter"></tbody></table>
+          <div class="actions" style="margin-top: 8px">
+            <button type="button" class="lien" id="ajouter-ligne">+ Ajouter un article</button>
+            <button type="button" class="lien" id="nouvel-article">+ Créer un article absent du stock</button>
+          </div>
+          <div id="bloc-nouvel-article" class="nouvel-article" hidden>
+            <label class="champ"><span>Nom du nouvel article</span><input id="nom-nouvel-article" maxlength="200"></label>
+            <label class="champ"><span>ISBN ou EAN (facultatif)</span><input id="isbn-nouvel-article" maxlength="20"></label>
+            <div class="actions"><button type="button" class="bouton petit" id="creer-article">Créer et ajouter</button>
+              <button type="button" class="lien" id="annuler-article">Annuler</button></div>
+          </div>
+        </div>
+        <label class="case" style="margin-top: 14px"><input type="checkbox" id="sans-articles">
+          Cette facture ne concerne aucun article du stock (prestation, frais…)</label>
+      </div>
+    </div>
+    <div class="fenetre-pied">
+      <span class="aide" id="circuit-accepter"></span>
+      <span class="espace"></span>
+      <span class="message erreur" id="erreur-accepter"></span>
+      <button type="button" class="bouton secondaire" data-fermer>Annuler</button>
+      <button class="bouton">Accepter la facture</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Mettre en attente ou refuser : motif (refus : transmis à Qonto, définitif) -->
+<dialog id="fenetre-motif" class="petite" style="width: min(480px, 95vw)">
+  <form class="fenetre" id="form-motif" novalidate>
+    <div class="fenetre-entete"><h2 id="titre-motif">Refuser la facture</h2>
+      <button type="button" class="fermer" data-fermer title="Fermer">×</button></div>
+    <div class="fenetre-corps" style="grid-template-columns: 1fr">
+      <div>
+        <p class="encart alerte" id="encart-refus">Le refus est transmis à Qonto, avec le motif. Il est
+          <strong>définitif</strong>.</p>
+        <label class="champ" style="margin-top: 12px" id="champ-code"><span>Motif du refus</span>
+          <select name="code"><option value="">Choisir…</option></select></label>
+        <label class="champ" style="margin-top: 10px"><span id="libelle-motif">Précisions (envoyées avec le refus)</span>
+          <textarea name="motif" rows="3" maxlength="500" required></textarea></label>
+      </div>
+    </div>
+    <div class="fenetre-pied">
+      <span class="espace"></span>
+      <span class="message erreur" id="erreur-motif"></span>
+      <button type="button" class="bouton secondaire" data-fermer>Annuler</button>
+      <button class="bouton danger" id="valider-motif">Refuser la facture</button>
+    </div>
+  </form>
+</dialog>
+
+<script src="commun.js"></script>
+<script src="reception.js"></script>
+</body>
+</html>

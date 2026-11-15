@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta name="robots" content="noindex">
+  <script src="demo.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Factures · GestionPro</title>
+  <link rel="icon" href="icone.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="app">
+<main class="contenu">
+  <header class="entete-page">
+    <div><h1 id="titre-espace">Clients</h1><p id="sous-titre-espace"></p></div>
+    <div class="actions">
+      <a class="bouton secondaire" id="lien-plateforme" href="plateforme.html">Facture électronique <span class="compteur" id="nb-plateforme"></span></a>
+      <button type="button" class="bouton" id="ajouter">Ajouter une facture</button>
+      <button type="button" class="bouton" id="nouvelle-commande" hidden>Nouveau bon de commande</button>
+    </div>
+  </header>
+
+  <!-- Sous-onglets : remplacés par les entrées du menu (gardés cachés : compteurs, état des vues) -->
+  <nav class="sous-onglets" data-sens="client" hidden>
+    <a href="devis.html" id="lien-devis">Devis</a>
+    <button type="button" class="actif" data-sous="factures">Factures <span class="compteur" data-nb="client-factures"></span></button>
+    <button type="button" data-sous="avoirs">Avoirs <span class="compteur" data-nb="client-avoirs"></span></button>
+    <button type="button" data-sous="relances">À relancer <span class="compteur" data-nb="client-relances"></span></button>
+  </nav>
+  <nav class="sous-onglets" data-sens="fournisseur" hidden>
+    <button type="button" class="actif" data-sous="factures">Factures <span class="compteur" data-nb="fournisseur-factures"></span></button>
+    <button type="button" data-sous="notes">Notes de frais <span class="compteur" data-nb="fournisseur-notes"></span></button>
+    <button type="button" data-sous="frais">Assurances et frais bancaires <span class="compteur" data-nb="fournisseur-frais"></span></button>
+    <button type="button" data-sous="commandes">Bons de commande <span class="compteur" id="nb-commandes"></span></button>
+  </nav>
+
+  <!-- Deux chiffres propres à l'onglet affiché (voir afficherResume) -->
+  <section class="resume">
+    <div><span id="r1-titre"></span><strong id="r1"></strong><small id="r1-detail"></small></div>
+    <div><span id="r2-titre"></span><strong id="r2"></strong><small id="r2-detail"></small></div>
+  </section>
+
+  <section class="carte zone-depot" id="liste">
+
+    <div id="vue-recurrents" hidden>
+      <div class="carte-entete" style="margin-top: 4px">
+        <div><h3>Prélèvements et contrats</h3>
+          <p class="aide">Décrivez une fois chaque assurance, frais de tenue de compte ou abonnement : chaque échéance est
+            enregistrée toute seule à sa date (déjà réglée si elle est prélevée) et les prochaines comptent dans la
+            trésorerie prévisionnelle.</p></div>
+        <button type="button" class="bouton secondaire petit" id="nouveau-recurrent">Ajouter un prélèvement ou contrat</button>
+      </div>
+      <div class="defile">
+        <table class="tableau" id="table-recurrents">
+          <thead><tr><th>Organisme</th><th>Catégorie</th><th class="droite">Montant</th><th>Fréquence</th>
+            <th>Prochaine échéance</th><th class="droite">Par an</th><th></th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <p class="vide" id="vide-recurrents" hidden>Aucun prélèvement ni contrat enregistré pour l'instant.</p>
+      <h3 style="margin: 22px 0 6px">Échéances enregistrées</h3>
+    </div>
+
+    <div id="vue-factures">
+
+    <div class="barre-outils">
+      <div class="segments" id="filtre-statut">
+        <button type="button" class="actif" data-statut="a_regler">À encaisser</button>
+        <button type="button" data-statut="payee">Encaissées</button>
+        <button type="button" data-statut="">Toutes</button>
+        <button type="button" data-statut="a_valider" id="filtre-a-valider" hidden>À valider</button>
+      </div>
+      <input type="search" id="recherche" placeholder="Rechercher">
+    </div>
+
+    <div class="defile">
+      <table class="tableau" id="table-factures">
+        <thead><tr>
+          <th id="col-date">Échéance</th><th id="col-tiers">Client</th><th id="col-numero">N° de facture</th>
+          <th class="droite">Montant TTC</th><th>Statut</th><th></th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <p class="vide" id="vide" hidden></p>
+
+    <div class="pied-tableau">
+      <span id="total-filtre"></span>
+      <span class="actions">
+        <a class="lien discret" href="/api/export/situation.xlsx" download>Situation financière (Excel)</a>
+        <a class="lien discret" href="/api/factures/export.csv">Exporter pour le comptable (CSV)</a>
+      </span>
+    </div>
+    </div>
+
+    <div id="vue-commandes" hidden>
+      <div class="barre-outils">
+        <div class="segments" id="filtre-commandes">
+          <button type="button" class="actif" data-statut="en_cours">En cours</button>
+          <button type="button" data-statut="recue">Reçues</button>
+          <button type="button" data-statut="">Toutes</button>
+        </div>
+        <input type="search" id="recherche-commandes" placeholder="Rechercher">
+      </div>
+      <div class="defile">
+        <table class="tableau" id="table-commandes">
+          <thead><tr>
+            <th>N°</th><th>Date</th><th>Fournisseur</th><th class="droite">Montant TTC</th><th>Statut</th><th></th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <p class="vide" id="vide-commandes" hidden></p>
+    </div>
+  </section>
+</main>
+
+<!-- Saisie d'une facture -->
+<dialog id="fenetre">
+  <form class="fenetre" id="form-facture" novalidate>
+    <div class="fenetre-entete">
+      <h2 id="fenetre-titre">Nouvelle facture</h2>
+      <span class="aide" id="file-attente"></span>
+      <button type="button" class="fermer" data-fermer title="Fermer">×</button>
+    </div>
+
+    <div class="fenetre-corps">
+      <div>
+        <div class="apercu" id="apercu"></div>
+        <div class="actions" id="actions-piece" style="margin-top: 8px" hidden>
+          <span class="aide" id="nom-piece"></span>
+          <label class="lien">Remplacer<input type="file" class="choix-piece" accept="application/pdf,image/*" hidden></label>
+          <button type="button" class="lien discret" id="retirer-piece">Retirer</button>
+        </div>
+      </div>
+
+      <div>
+        <p class="encart" id="info-emise" style="margin-bottom: 16px" hidden></p>
+        <input type="hidden" name="famille">
+        <div class="sens" style="margin-bottom: 16px">
+          <label class="case"><input type="radio" name="type" value="fournisseur" checked> À payer (fournisseur)</label>
+          <label class="case"><input type="radio" name="type" value="client"> À encaisser (client)</label>
+        </div>
+        <div class="champs">
+          <label class="champ c6"><span id="libelle-tiers">Fournisseur</span><input name="tiers" list="liste-tiers" required></label>
+          <label class="champ"><span>Montant TTC (€)</span><input name="montant_ttc" type="number" step="0.01" min="0" required></label>
+          <label class="champ" id="champ-echeance"><span>Échéance</span><input name="date_echeance" type="date">
+            <span class="raccourcis">
+              <button type="button" data-jours="0">À réception</button>
+              <button type="button" data-jours="30">30 jours</button>
+              <button type="button" data-jours="45">45 jours</button>
+              <button type="button" data-jours="60">60 jours</button>
+            </span>
+          </label>
+          <label class="champ" id="champ-numero"><span>N° de facture</span><input name="numero"></label>
+          <label class="champ"><span>Date de la facture</span><input name="date_facture" type="date"></label>
+          <label class="champ c6"><span id="libelle-categorie">Catégorie</span><input name="categorie" list="liste-categories"></label>
+          <label class="champ c6 case"><input name="payee" type="checkbox"> <span id="libelle-payee">Déjà payée</span></label>
+          <label class="champ si-payee"><span>Date de paiement</span><input name="date_paiement" type="date"></label>
+          <label class="champ si-payee"><span>Mode de paiement</span><input name="mode_paiement" list="liste-modes"></label>
+        </div>
+        <div class="articles-facture" id="bloc-articles" hidden>
+          <h3>Articles du stock <span style="text-transform: none; letter-spacing: 0; font-weight: 400">(facultatif)</span></h3>
+          <p class="aide" id="aide-articles"></p>
+          <table><tbody id="articles-facture"></tbody></table>
+          <button type="button" class="bouton secondaire petit" id="ajouter-article-facture">Ajouter un article</button>
+        </div>
+        <details class="plus" style="margin-top: 16px">
+          <summary>Plus d'informations</summary>
+          <div class="champs">
+            <label class="champ"><span>Dont TVA (€)</span><input name="montant_tva" type="number" step="0.01" min="0"></label>
+            <label class="champ"><span id="libelle-commande">N° de bon de commande</span><input name="commande">
+              <span class="aide" id="lien-commande"></span></label>
+            <label class="champ c6"><span>Notes</span><textarea name="notes" rows="2"></textarea></label>
+          </div>
+        </details>
+        <div id="bloc-validation" class="bloc-validation" hidden>
+          <h3>Validation <span id="etat-validation"></span></h3>
+          <ul id="liste-validation"></ul>
+          <div id="actions-validation" class="actions">
+            <button type="button" class="bouton petit" data-decision="valide">Valider</button>
+            <button type="button" class="bouton secondaire petit" data-decision="attente">Mettre en attente</button>
+            <button type="button" class="bouton danger petit" data-decision="refuse">Refuser</button>
+            <button type="button" class="lien" data-decision="annuler">Retirer ma décision</button>
+          </div>
+          <p class="message erreur" id="erreur-validation"></p>
+        </div>
+        <div id="bloc-relances" style="margin-top: 16px" hidden>
+          <h3>Relances envoyées</h3>
+          <table class="tableau compact"><tbody id="liste-relances"></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <div class="fenetre-pied">
+      <button type="button" class="bouton danger" id="supprimer">Supprimer</button>
+      <button type="button" class="bouton danger" id="avoir" hidden>Annuler par un avoir</button>
+      <button type="button" class="bouton secondaire" id="relancer" hidden>Relancer le client</button>
+      <button type="button" class="bouton secondaire" id="envoyer-facture" hidden>Envoyer par e-mail</button>
+      <span class="espace"></span>
+      <span class="message erreur" id="erreur-facture"></span>
+      <button type="button" class="bouton secondaire" data-fermer>Annuler</button>
+      <button class="bouton">Enregistrer</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Prélèvement ou contrat récurrent (assurance, frais bancaires…) -->
+<dialog id="fenetre-recurrent" class="petite">
+  <form class="fenetre" id="form-recurrent" novalidate>
+    <div class="fenetre-entete">
+      <h2 id="titre-recurrent">Prélèvement ou contrat</h2>
+      <button type="button" class="fermer" data-fermer-recurrent title="Fermer">×</button>
+    </div>
+    <div class="fenetre-corps" style="grid-template-columns: 1fr">
+      <div class="champs">
+        <label class="champ c6"><span>Organisme</span>
+          <input name="tiers" list="liste-tiers" required placeholder="Banque, assureur…"></label>
+        <label class="champ"><span>Catégorie</span><input name="categorie" list="liste-categories-frais"></label>
+        <label class="champ"><span>Libellé <em>(facultatif)</em></span>
+          <input name="libelle" placeholder="RC professionnelle, tenue de compte…"></label>
+        <label class="champ"><span>Montant de chaque échéance (€)</span>
+          <input name="montant_ttc" type="number" step="0.01" min="0" required></label>
+        <label class="champ"><span>Dont TVA (€) <em>(facultatif)</em></span>
+          <input name="montant_tva" type="number" step="0.01" min="0"></label>
+        <label class="champ"><span>Fréquence</span>
+          <select name="frequence">
+            <option value="mensuelle">Tous les mois</option>
+            <option value="trimestrielle">Tous les trimestres</option>
+            <option value="semestrielle">Tous les six mois</option>
+            <option value="annuelle">Tous les ans</option>
+          </select></label>
+        <label class="champ"><span>Prochaine échéance</span><input name="prochaine" type="date" required></label>
+        <label class="champ c6 case"><input name="prelevement" type="checkbox" checked>
+          <span>Prélevé automatiquement (l'échéance est enregistrée comme payée)</span></label>
+        <label class="champ c6 case"><input name="actif" type="checkbox" checked>
+          <span>En cours (décochez pour un contrat résilié : plus aucune échéance ne sera créée)</span></label>
+      </div>
+    </div>
+    <div class="fenetre-pied">
+      <button type="button" class="bouton danger" id="supprimer-recurrent" hidden>Supprimer</button>
+      <span class="espace"></span>
+      <span class="message erreur" id="erreur-recurrent"></span>
+      <button type="button" class="bouton secondaire" data-fermer-recurrent>Annuler</button>
+      <button class="bouton">Enregistrer</button>
+    </div>
+  </form>
+</dialog>
+<datalist id="liste-categories-frais">
+  <option value="Assurance"><option value="Frais bancaires"><option value="Abonnement"><option value="Autre">
+</datalist>
+
+<!-- Bon de commande à un fournisseur -->
+<dialog id="fenetre-commande" style="width: min(980px, 96vw)">
+  <form class="fenetre" id="form-commande" novalidate>
+    <div class="fenetre-entete">
+      <h2 id="titre-commande">Nouveau bon de commande</h2>
+      <button type="button" class="fermer" data-fermer-commande title="Fermer">×</button>
+    </div>
+    <div class="fenetre-corps" style="grid-template-columns: 1fr">
+      <div>
+        <div class="champs">
+          <label class="champ c6"><span>Fournisseur</span><input name="fournisseur" list="liste-fournisseurs" required></label>
+          <label class="champ"><span>Date</span><input name="date" type="date"></label>
+          <label class="champ"><span>Livraison souhaitée le <em>(facultatif)</em></span><input name="livraison_souhaitee" type="date"></label>
+          <label class="champ c6"><span>Objet <em>(facultatif)</em></span><input name="objet" placeholder="Réimpression, réassort, fournitures…"></label>
+        </div>
+        <div class="defile" style="margin-top: 16px">
+          <table class="tableau" id="lignes-commande">
+            <thead><tr>
+              <th>Article</th><th>Quantité</th><th>Unité</th><th>Prix unitaire HT</th><th>TVA %</th>
+              <th class="droite">Total HT</th><th></th>
+            </tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="actions" style="margin-top: 10px">
+          <button type="button" class="bouton secondaire petit" id="ajouter-ligne-commande">Ajouter une ligne</button>
+          <span id="totaux-commande" class="nombre" style="margin-left: auto"></span>
+        </div>
+        <details class="plus" style="margin-top: 16px">
+          <summary>Livraison et remarques</summary>
+          <div class="champs">
+            <label class="champ c6"><span>Adresse de livraison <em>(vide : l'adresse de votre entreprise)</em></span>
+              <textarea name="adresse_livraison" rows="2"></textarea></label>
+            <label class="champ c6"><span>Remarques <em>(imprimées sur le bon de commande)</em></span>
+              <textarea name="notes" rows="2"></textarea></label>
+          </div>
+        </details>
+      </div>
+    </div>
+    <div class="fenetre-pied">
+      <button type="button" class="bouton danger" id="supprimer-commande" hidden>Supprimer</button>
+      <span class="espace"></span>
+      <span class="message erreur" id="erreur-commande"></span>
+      <button type="button" class="bouton secondaire" data-fermer-commande>Annuler</button>
+      <button class="bouton">Enregistrer et voir le PDF</button>
+    </div>
+  </form>
+</dialog>
+<datalist id="liste-fournisseurs"></datalist>
+<datalist id="liste-articles-commande"></datalist>
+
+<!-- Relance d'une facture impayée -->
+<dialog id="fenetre-relance" style="width: min(640px, 95vw)">
+  <form class="fenetre" id="form-relance" novalidate>
+    <div class="fenetre-entete">
+      <h2 id="titre-relance">Relancer</h2>
+      <button type="button" class="fermer" data-fermer-relance title="Fermer">×</button>
+    </div>
+    <div class="fenetre-corps" style="grid-template-columns: 1fr">
+      <div>
+        <div class="segments" id="niveaux-relance" style="margin-bottom: 14px">
+          <button type="button" data-niveau="1">Rappel</button>
+          <button type="button" data-niveau="2">Deuxième relance</button>
+          <button type="button" data-niveau="3">Mise en demeure</button>
+        </div>
+        <p class="aide" id="historique-relance" style="margin-bottom: 12px"></p>
+        <div class="champs">
+          <label class="champ c6"><span>E-mail du client</span><input name="email" type="email" placeholder="adresse@exemple.fr"></label>
+          <label class="champ c6"><span>Objet</span><input name="objet"></label>
+          <label class="champ c6"><span>Message</span><textarea name="texte" rows="14"></textarea></label>
+        </div>
+        <p class="aide" style="margin-top: 10px">« Envoyer par e-mail » ouvre votre messagerie avec ce message prêt à partir.
+          La pièce jointe ne peut pas y être ajoutée automatiquement : joignez-y
+          <a class="lien" id="lien-facture-relance" target="_blank">la facture</a> ou la lettre PDF si vous le souhaitez.</p>
+      </div>
+    </div>
+    <div class="fenetre-pied">
+      <span class="espace"></span>
+      <span class="message erreur" id="erreur-relance"></span>
+      <button type="button" class="bouton secondaire" data-fermer-relance>Annuler</button>
+      <button type="button" class="bouton secondaire" id="relance-pdf">Télécharger la lettre (PDF)</button>
+      <button type="button" class="bouton" id="relance-email">Envoyer par e-mail</button>
+    </div>
+  </form>
+</dialog>
+
+<datalist id="liste-tiers"></datalist>
+<datalist id="liste-categories"></datalist>
+<datalist id="liste-modes">
+  <option value="Virement"><option value="Prélèvement"><option value="Carte bancaire">
+  <option value="Chèque"><option value="Espèces">
+</datalist>
+
+<!-- Refus d'une facture reçue par Qonto (motif transmis) -->
+<dialog id="fenetre-refus" class="petite" style="width: min(480px, 95vw)">
+  <form class="fenetre" id="form-refus" novalidate>
+    <div class="fenetre-entete"><h2>Refuser la facture</h2>
+      <button type="button" class="fermer" data-fermer-refus title="Fermer">×</button></div>
+    <div class="fenetre-corps" style="grid-template-columns: 1fr">
+      <div>
+        <p class="encart alerte">Cette facture vient de Qonto : le refus lui est transmis, avec le motif.
+          Chez Qonto, il est <strong>définitif</strong>.</p>
+        <label class="champ" style="margin-top: 12px"><span>Motif du refus</span>
+          <select name="code"><option value="">Choisir…</option></select></label>
+        <label class="champ" style="margin-top: 10px"><span>Précisions (envoyées avec le refus)</span>
+          <textarea name="motif" rows="3" maxlength="500" required></textarea></label>
+      </div>
+    </div>
+    <div class="fenetre-pied">
+      <span class="espace"></span>
+      <span class="message erreur" id="erreur-refus"></span>
+      <button type="button" class="bouton secondaire" data-fermer-refus>Annuler</button>
+      <button class="bouton danger">Refuser la facture</button>
+    </div>
+  </form>
+</dialog>
+
+<script src="commun.js"></script>
+<script src="factures.js"></script>
+<script src="commandes.js"></script>
+</body>
+</html>

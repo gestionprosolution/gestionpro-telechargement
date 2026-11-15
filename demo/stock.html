@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta name="robots" content="noindex">
+  <script src="demo.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Stock · GestionPro</title>
+  <link rel="icon" href="icone.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="app">
+<main class="contenu">
+  <header class="entete-page">
+    <div><h1>Stock</h1><p>Les devis acceptés et les factures réglées mettent le stock à jour automatiquement.</p></div>
+    <div class="actions">
+      <a class="bouton secondaire" href="/api/export/stock.xlsx" download
+         title="Quantités, dépôts, valeur du stock et tous les mouvements">Exporter (Excel)</a>
+      <button type="button" class="bouton secondaire" id="ouvrir-depot">Mettre en dépôt</button>
+      <button type="button" class="bouton secondaire" id="ouvrir-demande">Contacter un fournisseur</button>
+      <button type="button" class="bouton" id="nouvel-article">Nouvel article</button>
+    </div>
+  </header>
+
+  <section class="resume trois">
+    <div><span>Articles</span><strong id="r-articles"></strong><small id="r-unites"></small></div>
+    <div><span>Valeur du stock</span><strong id="r-valeur"></strong><small>au prix d'achat HT</small></div>
+    <div><span>À réapprovisionner</span><strong id="r-alertes"></strong><small id="r-alertes-detail"></small></div>
+  </section>
+
+  <section class="carte">
+    <div class="barre-outils">
+      <div class="segments" id="filtre">
+        <button type="button" class="actif" data-filtre="">Tous les articles</button>
+        <button type="button" data-filtre="alerte">À réapprovisionner</button>
+      </div>
+      <input type="search" id="recherche" placeholder="Rechercher">
+    </div>
+    <div class="defile">
+      <table class="tableau" id="table-stock">
+        <thead><tr>
+          <th>Article</th><th class="droite">En stock</th><th class="droite">Réservé</th>
+          <th class="droite">Prix de vente HT</th><th></th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <p class="vide" id="vide" hidden></p>
+  </section>
+
+  <!-- Dépôts : stock confié à des clients (libraires, boutiques…) -->
+  <section class="carte" id="section-depots" style="margin-top: 20px">
+    <div class="carte-entete">
+      <div><h2>Stock en dépôt chez vos clients</h2>
+        <p class="aide">Exemplaires confiés à un libraire ou une boutique : ils font toujours partie de votre stock.
+          À chaque relevé de ventes, indiquez ce qui a été vendu (à facturer) et ce qui vous revient.</p></div>
+    </div>
+    <div id="liste-depots"></div>
+    <p class="vide" id="depots-vide" hidden>Aucun stock en dépôt. « Mettre en dépôt » enregistre les exemplaires confiés à un client.</p>
+  </section>
+</main>
+
+<!-- Fiche article -->
+<dialog id="fenetre-article">
+  <form class="fenetre" id="form-article" novalidate>
+    <div class="fenetre-entete">
+      <h2 id="titre-article">Nouvel article</h2>
+      <button type="button" class="fermer" data-fermer title="Fermer">×</button>
+    </div>
+    <div class="fenetre-corps" id="corps-article">
+      <div class="champs">
+        <label class="champ c2"><span>Catégorie</span><select name="categorie">
+          <option value="autre">Produit, matériel…</option><option value="livre">Livre</option></select></label>
+        <label class="champ c4"><span>Nom de l'article</span><input name="nom" required></label>
+        <label class="champ c2" data-categorie="livre"><span>ISBN</span><input name="isbn" placeholder="978-2-…" autocomplete="off"></label>
+        <label class="champ c2" data-categorie="autre"><span>Référence <em>(facultatif)</em></span>
+          <input name="reference" autocomplete="off"></label>
+        <label class="champ c2"><span>EAN <em>(code-barres, facultatif)</em></span><input name="ean" inputmode="numeric" autocomplete="off"></label>
+        <label class="champ c2"><span>Unité</span><select name="unite"></select></label>
+        <p class="champ c6 aide" id="repartition-article" hidden style="margin: 0; display: block"></p>
+        <label class="champ c2"><span>Prix d'achat HT (€)</span><input name="prix_achat_ht" type="number" step="0.01" min="0"></label>
+        <label class="champ c2"><span>Prix de vente HT (€)</span><input name="prix_vente_ht" type="number" step="0.01" min="0"></label>
+        <label class="champ"><span>Seuil d'alerte <em>(réapprovisionner en dessous)</em></span><input name="seuil_alerte" type="number" step="any" min="0"></label>
+        <label class="champ c3"><span>Fournisseur habituel <em>(pour les demandes de prix)</em></span>
+          <input name="fournisseur" list="liste-fournisseurs" autocomplete="off"></label>
+        <label class="champ" id="champ-initial"><span>Quantité en stock aujourd'hui</span><input name="stock_initial" type="number" step="any" min="0"></label>
+        <label class="champ c6"><span>Notes</span><textarea name="notes" rows="2"></textarea></label>
+      </div>
+      <div id="bloc-historique">
+        <h3>Derniers mouvements</h3>
+        <table class="tableau">
+          <tbody id="historique"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="fenetre-pied">
+      <button type="button" class="bouton danger" id="supprimer-article">Supprimer</button>
+      <span class="espace"></span>
+      <span class="message erreur" id="erreur-article"></span>
+      <button type="button" class="bouton secondaire" data-fermer>Annuler</button>
+      <button class="bouton">Enregistrer</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Entrée / sortie manuelle -->
+<dialog id="fenetre-mouvement" class="petite">
+  <form class="fenetre" id="form-mouvement" novalidate>
+    <div class="fenetre-entete">
+      <h2 id="titre-mouvement"></h2>
+      <button type="button" class="fermer" data-fermer title="Fermer">×</button>
+    </div>
+    <div class="fenetre-corps">
+      <p class="aide" id="stock-actuel"></p>
+      <div class="champs">
+        <label class="champ"><span>Quantité</span><input name="quantite" type="number" step="any" min="0" required></label>
+        <label class="champ"><span>Date</span><input name="date" type="date"></label>
+        <label class="champ c6"><span>Motif <em>(facultatif)</em></span><input name="motif" placeholder="Livraison, inventaire, casse…"></label>
+      </div>
+    </div>
+    <div class="fenetre-pied">
+      <span class="espace"></span>
+      <span class="message erreur" id="erreur-mouvement"></span>
+      <button type="button" class="bouton secondaire" data-fermer>Annuler</button>
+      <button class="bouton">Valider</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Contacter un fournisseur (demande de prix pour réapprovisionner) -->
+<dialog id="fenetre-demande" style="width: min(860px, 95vw)">
+  <form class="fenetre" id="form-demande" novalidate>
+    <div class="fenetre-entete">
+      <h2>Contacter un fournisseur</h2>
+      <button type="button" class="fermer" data-fermer title="Fermer">×</button>
+    </div>
+    <div class="fenetre-corps" style="grid-template-columns: 1fr">
+      <div>
+        <p class="aide">Un e-mail par fournisseur, avec uniquement les articles qu'il vous fournit : choisissez le
+          fournisseur, vérifiez les quantités, puis préparez le message (comme pour l'envoi d'un devis), ou créez
+          directement un bon de commande. Les quantités proposées couvrent les devis en attente et remontent le stock
+          à deux fois son seuil d'alerte.</p>
+        <div class="choix-fournisseurs" id="choix-fournisseurs"></div>
+        <div class="champs" style="margin-top: 12px">
+          <label class="champ c3"><span>Fournisseur</span>
+            <input name="fournisseur" list="liste-fournisseurs" autocomplete="off" placeholder="Nom du fournisseur"></label>
+          <p class="aide c3" id="email-fournisseur" style="align-self: end; margin: 0 0 10px"></p>
+        </div>
+        <div class="defile" style="margin-top: 12px">
+          <table class="tableau compact" id="table-demande">
+            <thead><tr><th style="width: 30px"></th><th>Article</th><th class="droite">En stock</th>
+              <th>Pourquoi</th><th style="width: 150px">Quantité demandée</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <p class="vide" id="demande-vide" hidden>Aucun article à réapprovisionner pour le moment.</p>
+        <label class="case" style="margin-top: 10px"><input type="checkbox" id="tous-articles">
+          <span>Afficher aussi les articles qui ne sont pas à réapprovisionner</span></label>
+      </div>
+    </div>
+    <div class="fenetre-pied">
+      <span class="espace"></span>
+      <span class="message erreur" id="erreur-demande"></span>
+      <button type="button" class="bouton secondaire" data-fermer>Annuler</button>
+      <button type="button" class="bouton secondaire" id="creer-commande">Créer un bon de commande</button>
+      <button class="bouton">Préparer l'e-mail</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Mise en dépôt chez un client -->
+<dialog id="fenetre-depot" style="width: min(760px, 95vw)">
+  <form class="fenetre" id="form-depot" novalidate>
+    <div class="fenetre-entete">
+      <h2>Mettre en dépôt</h2>
+      <button type="button" class="fermer" data-fermer title="Fermer">×</button>
+    </div>
+    <div class="fenetre-corps" style="grid-template-columns: 1fr">
+      <div>
+        <p class="aide">Les exemplaires confiés restent dans votre stock, mais ne sont plus disponibles chez vous.
+          Ils sont facturés au client au fil des relevés de ventes.</p>
+        <div class="champs" style="margin-top: 12px">
+          <label class="champ c4"><span>Chez qui ? <em>(client)</em></span>
+            <input name="lieu" list="liste-clients" autocomplete="off" placeholder="Librairie…" required></label>
+          <label class="champ c2"><span>Date</span><input name="date" type="date"></label>
+        </div>
+        <div class="defile" style="margin-top: 12px">
+          <table class="tableau compact" id="table-depot">
+            <thead><tr><th>Article</th><th class="droite">Disponible chez vous</th><th style="width: 150px">Quantité confiée</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="fenetre-pied">
+      <span class="espace"></span>
+      <span class="message erreur" id="erreur-depot"></span>
+      <button type="button" class="bouton secondaire" data-fermer>Annuler</button>
+      <button class="bouton">Enregistrer le dépôt</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Relevé des ventes d'un dépôt -->
+<dialog id="fenetre-releve" style="width: min(760px, 95vw)">
+  <form class="fenetre" id="form-releve" novalidate>
+    <div class="fenetre-entete">
+      <h2 id="titre-releve">Relevé de ventes</h2>
+      <button type="button" class="fermer" data-fermer title="Fermer">×</button>
+    </div>
+    <div class="fenetre-corps" style="grid-template-columns: 1fr">
+      <div>
+        <p class="aide">Reportez le relevé envoyé par votre client : les exemplaires <b>vendus</b> sortent du dépôt et
+          seront facturés ; les exemplaires <b>retournés</b> reviennent chez vous. Le reste demeure en dépôt.</p>
+        <div class="champs" style="margin-top: 12px">
+          <label class="champ c2"><span>Date du relevé</span><input name="date" type="date"></label>
+        </div>
+        <div class="defile" style="margin-top: 12px">
+          <table class="tableau compact" id="table-releve">
+            <thead><tr><th>Article</th><th class="droite">En dépôt</th><th style="width: 110px">Vendus</th>
+              <th style="width: 110px">Retournés</th><th class="droite">Restera</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="fenetre-pied">
+      <span class="espace"></span>
+      <span class="message erreur" id="erreur-releve"></span>
+      <button type="button" class="bouton secondaire" data-fermer>Annuler</button>
+      <button class="bouton">Enregistrer le relevé</button>
+    </div>
+  </form>
+</dialog>
+
+<datalist id="liste-clients"></datalist>
+<datalist id="liste-fournisseurs"></datalist>
+
+<script src="commun.js"></script>
+<script src="stock.js"></script>
+</body>
+</html>

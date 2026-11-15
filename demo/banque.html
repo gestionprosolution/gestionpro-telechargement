@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta name="robots" content="noindex">
+  <script src="demo.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Banque · GestionPro</title>
+  <link rel="icon" href="icone.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="app">
+<main class="contenu">
+  <header class="entete-page">
+    <div><h1>Banque</h1>
+      <p>Vos recettes et dépenses, rapprochées de vos factures : une facture rapprochée passe « payée ».</p></div>
+    <div class="actions">
+      <label class="bouton" id="bouton-importer">Importer un relevé
+        <input type="file" id="fichier-releve" accept=".csv,.ofx,.qfx,.xml,.txt" hidden></label>
+    </div>
+  </header>
+
+  <!-- Relevé trouvé dans Téléchargements -->
+  <div class="encart ok bandeau-releve" id="releve-trouve" hidden></div>
+  <p class="message" id="message-banque"></p>
+
+  <!-- Aucun relevé encore importé -->
+  <section class="carte" id="premier-import" hidden>
+    <h2>Importez votre premier relevé</h2>
+    <ol class="etapes" style="margin-top: 10px">
+      <li>Sur le site de votre banque, ouvrez vos opérations et choisissez <strong>Exporter</strong> (ou Télécharger) au
+        format <strong>CSV</strong>, <strong>OFX</strong> ou <strong>CAMT.053</strong>.</li>
+      <li>Revenez ici : GestionPro repère le fichier dans vos Téléchargements et propose de l'importer. Sinon, cliquez
+        sur « Importer un relevé ».</li>
+      <li>Validez les rapprochements proposés : les factures concernées passent « payées ».</li>
+    </ol>
+    <p class="aide" style="margin-top: 10px">Importez à nouveau quand vous voulez, même sur une période déjà importée :
+      les opérations déjà connues ne sont pas recréées.</p>
+  </section>
+
+  <div class="kpis" id="resume-banque"></div>
+
+  <section class="carte" id="carte-operations">
+    <div class="carte-entete">
+      <div class="segments" id="filtre-banque">
+        <button type="button" class="actif" data-filtre="a_rapprocher">À rapprocher <span class="compteur" id="nb-a-rapprocher"></span></button>
+        <button type="button" data-filtre="rapprochee">Rapprochées</button>
+        <button type="button" data-filtre="ignoree">Ignorées</button>
+        <button type="button" data-filtre="">Toutes</button>
+      </div>
+      <input type="search" id="recherche-banque" placeholder="Rechercher un libellé, un montant…" style="max-width: 260px">
+    </div>
+    <div class="defile">
+      <table class="tableau table-banque" id="table-banque">
+        <thead><tr><th>Date</th><th>Libellé</th><th class="droite">Montant</th><th>Rapprochement</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <p class="vide" id="banque-vide" hidden></p>
+  </section>
+</main>
+
+<!-- Associer une opération à une ou plusieurs factures -->
+<dialog id="fenetre-lettrage" class="petite" style="width: min(620px, 95vw)">
+  <form class="fenetre" id="form-lettrage">
+    <div class="fenetre-entete">
+      <h2>Rapprocher l'opération</h2>
+      <button type="button" class="fermer" data-fermer title="Fermer">×</button>
+    </div>
+    <div class="fenetre-corps">
+      <div>
+        <p id="lettrage-operation" class="encart"></p>
+        <input type="search" id="lettrage-recherche" placeholder="Rechercher une facture (n°, client, fournisseur, montant)"
+          style="margin: 12px 0 8px">
+        <div class="liste-lettrage" id="lettrage-factures"></div>
+        <p class="aide" id="lettrage-total" style="margin-top: 10px"></p>
+      </div>
+    </div>
+    <div class="fenetre-pied">
+      <span class="espace"></span>
+      <span class="message erreur" id="erreur-lettrage"></span>
+      <button type="button" class="bouton secondaire" data-fermer>Annuler</button>
+      <button class="bouton" id="valider-lettrage">Rapprocher</button>
+    </div>
+  </form>
+</dialog>
+
+<script src="commun.js"></script>
+<script src="banque.js"></script>
+</body>
+</html>

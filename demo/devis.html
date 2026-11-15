@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta name="robots" content="noindex">
+  <script src="demo.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Devis · GestionPro</title>
+  <link rel="icon" href="icone.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="app">
+<main class="contenu">
+  <header class="entete-page">
+    <div><h1>Devis</h1><p>Remplissez votre devis : le total se calcule tout seul.</p></div>
+  </header>
+
+  <nav class="onglets">
+    <button type="button" class="actif" data-vue="nouveau">Nouveau devis</button>
+    <button type="button" data-vue="historique">Devis enregistrés <span class="compteur" id="nb-devis"></span></button>
+    <button type="button" data-vue="catalogue">Catalogue <span class="compteur" id="nb-catalogue"></span></button>
+  </nav>
+
+  <!-- Nouveau devis -->
+  <div id="vue-nouveau">
+    <p class="encart alerte" id="bandeau-edition" hidden style="margin-bottom: 16px"></p>
+    <section class="carte">
+      <div class="carte-entete">
+        <h2>Client</h2>
+        <select id="clients-connus" hidden style="width: auto">
+          <option value="">Reprendre un client existant…</option>
+        </select>
+      </div>
+      <div class="champs">
+        <label class="champ c2"><span>Type de client</span><select data-client="type">
+          <option value="particulier">Particulier</option><option value="professionnel">Professionnel (entreprise)</option></select></label>
+        <label class="champ c4"><span>Nom ou raison sociale</span><input data-client="nom"></label>
+        <label class="champ c2"><span>Téléphone</span><input data-client="telephone" type="tel"></label>
+        <label class="champ c6"><span>Adresse</span><input data-client="adresse"></label>
+        <label class="champ c2"><span>Code postal</span><input data-client="code_postal"></label>
+        <label class="champ c2"><span>Ville</span><input data-client="ville"></label>
+        <label class="champ c2"><span>E-mail</span><input data-client="email" type="email"></label>
+        <label class="champ si-pro"><span>SIREN ou SIRET <em>(obligatoire sur ses factures)</em></span><input data-client="siren"></label>
+        <label class="champ si-pro"><span>N° de TVA intracommunautaire</span><input data-client="tva_intracom"></label>
+      </div>
+      <details class="plus" id="bloc-livraison" style="margin-top: 14px">
+        <summary>Adresse de livraison ou d'intervention différente</summary>
+        <div class="champs">
+          <label class="champ c6"><span>Adresse</span><input data-client="livraison_adresse"></label>
+          <label class="champ c2"><span>Code postal</span><input data-client="livraison_code_postal"></label>
+          <label class="champ c4"><span>Ville</span><input data-client="livraison_ville"></label>
+        </div>
+      </details>
+    </section>
+
+    <section class="carte">
+      <div class="carte-entete"><h2>Prestations</h2></div>
+      <div class="champs" style="margin-bottom: 20px">
+        <label class="champ c6"><span>Objet du devis <em>(facultatif)</em></span>
+          <input id="objet" placeholder="Commande de mars, réimpression, prestation…"></label>
+      </div>
+      <div class="defile">
+        <table class="tableau" id="lignes">
+          <thead><tr>
+            <th>Produit ou service</th><th>Quantité</th><th>Unité</th><th>Prix unitaire HT</th>
+            <th class="droite">Total HT</th><th></th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="actions" style="margin-top: 12px">
+        <button type="button" class="bouton secondaire petit" id="ajouter-ligne">Ajouter une ligne</button>
+        <button type="button" class="bouton secondaire petit" id="inserer-ouvrage">Insérer un groupe de lignes…</button>
+        <button type="button" class="lien discret" id="lignes-vers-ouvrage">Enregistrer ces lignes comme groupe</button>
+      </div>
+    </section>
+
+    <section class="carte" id="carte-total">
+      <div class="carte-entete"><h2>Conditions et total</h2></div>
+      <div class="bas-devis" style="margin-top: 0">
+        <div class="champs">
+          <label class="champ c2 col-tva"><span>TVA (%)</span><input id="d-tva" type="number" step="0.1" min="0"></label>
+          <label class="champ c2"><span>Remise (%)</span><input id="d-remise" type="number" step="0.1" min="0" placeholder="0"></label>
+          <label class="champ c2"><span>Acompte (%)</span><input id="d-acompte" type="number" step="1" min="0" placeholder="0"></label>
+          <label class="champ c6"><span>Remarques pour le client</span>
+            <textarea id="d-notes" rows="3" placeholder="Délais, conditions particulières…"></textarea></label>
+          <label class="champ c6"><span>Nature de l'opération <em>(imprimée sur la facture)</em></span><select id="d-categorie">
+            <option value="">Réglage de l'entreprise (Paramètres)</option>
+            <option value="mixte">Fournitures et main-d'œuvre (biens et services)</option>
+            <option value="services">Prestations de services uniquement</option>
+            <option value="biens">Vente de biens uniquement</option></select></label>
+        </div>
+        <table class="totaux" id="totaux"></table>
+      </div>
+
+      <hr class="separateur">
+      <div class="champs">
+        <label class="champ c2"><span>N° de devis</span><input id="d-numero"></label>
+        <label class="champ c2"><span>Date</span><input id="d-date" type="date"></label>
+        <label class="champ c2"><span>Valable jusqu'au</span><input id="d-validite" type="date"></label>
+      </div>
+      <div class="actions fin" style="margin-top: 20px">
+        <span class="message" id="message"></span>
+        <button type="button" class="bouton secondaire" id="nouveau">Nouveau devis</button>
+        <button type="button" class="bouton" id="telecharger">Télécharger le PDF</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- Historique -->
+  <section class="carte" id="vue-historique" hidden>
+    <p class="encart ok" id="message-historique" hidden style="margin-bottom: 16px"></p>
+    <div class="barre-outils">
+      <div class="segments" id="filtre-statut-devis">
+        <button type="button" class="actif" data-statut="">Tous</button>
+        <button type="button" data-statut="en_attente">En attente</button>
+        <button type="button" data-statut="accepte">Acceptés</button>
+        <button type="button" data-statut="refuse">Refusés</button>
+      </div>
+      <input type="search" id="recherche-devis" placeholder="Rechercher un devis (client, n°, objet…)">
+    </div>
+    <div class="defile">
+      <table class="tableau" id="historique">
+        <thead><tr><th>Devis</th><th>Client</th><th class="droite">Montant TTC</th><th>Statut</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <p class="vide" id="historique-vide" hidden>Aucun devis enregistré pour le moment.</p>
+    <p class="aide" style="margin-top: 12px">Passez un devis à « Accepté » quand le client le signe :
+      les articles du stock qu'il contient sont alors retirés du stock, et vous pouvez créer sa facture.</p>
+  </section>
+  <!-- Catalogue de prestations -->
+  <section class="carte" id="vue-catalogue" hidden>
+    <div class="barre-outils">
+      <p class="aide">Les prestations que vous facturez souvent. Dans un devis, commencez à taper leur nom :
+        elles sont proposées et leur prix se remplit tout seul.</p>
+      <div class="actions">
+        <input type="search" id="recherche-catalogue" placeholder="Rechercher">
+        <button type="button" class="bouton" id="ajouter-prestation">Ajouter une prestation</button>
+      </div>
+    </div>
+    <div class="defile">
+      <table class="tableau" id="table-catalogue">
+        <thead><tr><th>Prestation</th><th>Unité</th><th class="droite">Prix unitaire HT</th><th>Notes</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <p class="vide" id="catalogue-vide" hidden></p>
+
+    <hr class="separateur">
+    <div class="barre-outils">
+      <div><h2>Groupes de lignes</h2>
+        <p class="aide">Plusieurs lignes qui vont toujours ensemble (ex. « Forfait installation » : matériel, main-d'œuvre,
+          déplacement), insérées d'un coup dans un devis avec « Insérer un groupe de lignes ».</p></div>
+      <button type="button" class="bouton" id="ajouter-ouvrage">Nouveau groupe de lignes</button>
+    </div>
+    <div class="defile">
+      <table class="tableau" id="table-ouvrages">
+        <thead><tr><th>Groupe</th><th>Contenu</th><th class="droite">Total HT</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <p class="vide" id="ouvrages-vide" hidden>Aucun groupe de lignes pour l'instant.</p>
+  </section>
+</main>
+
+<!-- Groupe de lignes (« ouvrage type » dans le code) : édition -->
+<dialog id="fenetre-ouvrage" style="width: min(900px, 95vw)">
+  <form class="fenetre" id="form-ouvrage" novalidate>
+    <div class="fenetre-entete">
+      <h2 id="titre-ouvrage">Nouveau groupe de lignes</h2>
+      <button type="button" class="fermer" data-fermer-ouvrage title="Fermer">×</button>
+    </div>
+    <div class="fenetre-corps" style="grid-template-columns: 1fr">
+      <div>
+        <label class="champ"><span>Nom du groupe</span><input name="nom" placeholder="Forfait installation"></label>
+        <table class="tableau compact" id="lignes-ouvrage" style="margin-top: 14px">
+          <thead><tr><th>Ligne</th><th style="width: 90px">Qté</th><th style="width: 110px">Unité</th>
+            <th style="width: 120px">P.U. HT</th><th style="width: 30px"></th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="actions" style="margin-top: 8px; justify-content: space-between">
+          <button type="button" class="bouton secondaire petit" id="ajouter-ligne-ouvrage">Ajouter une ligne</button>
+          <span class="aide" id="total-ouvrage"></span>
+        </div>
+        <label class="champ" style="margin-top: 14px"><span>Notes <em>(pour vous)</em></span><textarea name="notes" rows="2"></textarea></label>
+      </div>
+    </div>
+    <div class="fenetre-pied">
+      <button type="button" class="bouton danger" id="supprimer-ouvrage">Supprimer</button>
+      <span class="espace"></span>
+      <span class="message erreur" id="erreur-ouvrage"></span>
+      <button type="button" class="bouton secondaire" data-fermer-ouvrage>Annuler</button>
+      <button class="bouton">Enregistrer</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Groupe de lignes : choix pour l'insérer dans le devis -->
+<dialog id="fenetre-choix-ouvrage" class="petite">
+  <div class="fenetre">
+    <div class="fenetre-entete">
+      <h2>Insérer un groupe de lignes</h2>
+      <button type="button" class="fermer" data-fermer-choix title="Fermer">×</button>
+    </div>
+    <div class="fenetre-corps">
+      <div>
+        <input type="search" id="recherche-ouvrage" placeholder="Rechercher un groupe">
+        <div id="liste-choix-ouvrages" class="liste-choix" style="margin-top: 10px"></div>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<!-- Prestation du catalogue -->
+<dialog id="fenetre-prestation" class="petite">
+  <form class="fenetre" id="form-prestation" novalidate>
+    <div class="fenetre-entete">
+      <h2 id="titre-prestation">Nouvelle prestation</h2>
+      <button type="button" class="fermer" data-fermer-prestation title="Fermer">×</button>
+    </div>
+    <div class="fenetre-corps">
+      <div class="champs">
+        <label class="champ c6"><span>Intitulé <em>(tel qu'il apparaîtra sur le devis)</em></span><input name="designation" required></label>
+        <label class="champ"><span>Unité</span><select name="unite"></select></label>
+        <label class="champ"><span>Prix unitaire HT (€)</span><input name="prix_unitaire_ht" type="number" step="0.01" min="0"></label>
+        <label class="champ c6"><span>Notes <em>(pour vous, non imprimées)</em></span><textarea name="notes" rows="2"></textarea></label>
+      </div>
+    </div>
+    <div class="fenetre-pied">
+      <button type="button" class="bouton danger" id="supprimer-prestation">Supprimer</button>
+      <span class="espace"></span>
+      <span class="message erreur" id="erreur-prestation"></span>
+      <button type="button" class="bouton secondaire" data-fermer-prestation>Annuler</button>
+      <button class="bouton">Enregistrer</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Bon de commande reçu du client (n° + document), repris sur les factures -->
+<dialog id="fenetre-devis-signe" class="petite">
+  <form class="fenetre" id="form-devis-signe" novalidate>
+    <div class="fenetre-entete">
+      <h2 id="titre-devis-signe">Devis signé</h2>
+      <button type="button" class="fermer" data-fermer title="Fermer">×</button>
+    </div>
+    <div class="fenetre-corps">
+      <div>
+        <p class="aide" style="margin-bottom: 12px">Le client vous a renvoyé le devis signé ? Joignez-le : c'est la preuve
+          de son accord, retrouvée ensuite depuis le devis et ses factures. Vous pourrez aussi le faire plus tard,
+          depuis « Devis enregistrés ».</p>
+        <label class="champ"><span>Devis signé <em>(PDF ou photo)</em></span>
+          <input name="fichier" type="file" accept="application/pdf,image/jpeg,image/png,image/webp"></label>
+        <label class="champ" style="margin-top: 10px"><span>Signé le</span>
+          <input name="signe_le" type="date" style="max-width: 180px"></label>
+        <p class="aide" id="devis-signe-joint" hidden></p>
+      </div>
+    </div>
+    <div class="fenetre-pied">
+      <span class="espace"></span>
+      <span class="message erreur" id="erreur-devis-signe"></span>
+      <button type="button" class="bouton secondaire" data-fermer>Plus tard</button>
+      <button class="bouton">Joindre le devis signé</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="fenetre-commande-client" class="petite">
+  <form class="fenetre" id="form-commande-client" novalidate>
+    <div class="fenetre-entete">
+      <h2 id="titre-commande-client">Bon de commande du client</h2>
+      <button type="button" class="fermer" data-fermer title="Fermer">×</button>
+    </div>
+    <div class="fenetre-corps">
+      <div>
+        <p class="aide" style="margin-bottom: 12px">Le client vous a envoyé son bon de commande ? Notez son numéro :
+          il sera imprimé sur les factures de ce devis. Joignez le document pour le retrouver depuis les factures.</p>
+        <label class="champ"><span>N° de commande du client</span>
+          <input name="commande_client" maxlength="60" placeholder="ex. CMD-2026-118"></label>
+        <label class="champ"><span>Document <em>(PDF ou photo)</em></span>
+          <input name="commande_fichier" type="file" accept="application/pdf,image/jpeg,image/png,image/webp"></label>
+        <p class="aide" data-commande-jointe hidden></p>
+      </div>
+    </div>
+    <div class="fenetre-pied">
+      <span class="espace"></span>
+      <span class="message erreur" id="erreur-commande-client"></span>
+      <button type="button" class="bouton secondaire" data-fermer>Annuler</button>
+      <button class="bouton">Enregistrer</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Facturer un devis accepté -->
+<dialog id="fenetre-facturer" class="petite">
+  <form class="fenetre" id="form-facturer" novalidate>
+    <div class="fenetre-entete">
+      <h2 id="titre-facturer">Facturer le devis</h2>
+      <button type="button" class="fermer" data-fermer title="Fermer">×</button>
+    </div>
+    <div class="fenetre-corps">
+      <div>
+        <table class="totaux" id="facturer-resume" style="margin-bottom: 16px"></table>
+        <label class="case" style="margin-bottom: 12px">
+          <input type="radio" name="type" value="acompte">
+          <span>Facture d'acompte de</span>
+          <input name="pourcent" type="number" min="1" max="99" step="1" style="width: 72px">
+          <span>% <span class="aide" id="montant-acompte"></span></span>
+        </label>
+        <label class="case">
+          <input type="radio" name="type" value="finale" checked>
+          <span id="libelle-finale">Facture totale</span>
+        </label>
+        <label class="champ" style="margin: 10px 0 0 26px"><span>Réalisé ou livré le <em>(imprimé sur la facture)</em></span>
+          <input name="date_execution" type="date" style="max-width: 180px"></label>
+        <label class="champ" style="margin-top: 14px"><span>Paiement au plus tard le</span>
+          <input name="date_echeance" type="date" style="max-width: 180px"></label>
+        <fieldset class="bloc-commande-client">
+          <legend>Bon de commande du client <em>(s'il vous en a envoyé un)</em></legend>
+          <div class="grille-commande-client">
+            <label class="champ"><span>N° de commande <em>(imprimé sur la facture)</em></span>
+              <input name="commande_client" maxlength="60" placeholder="ex. CMD-2026-118"></label>
+            <label class="champ"><span>Document <em>(PDF ou photo)</em></span>
+              <input name="commande_fichier" type="file" accept="application/pdf,image/jpeg,image/png,image/webp"></label>
+          </div>
+          <p class="aide" data-commande-jointe hidden></p>
+        </fieldset>
+        <p class="aide" style="margin-top: 14px">La facture est numérotée, enregistrée dans Factures &gt; À encaisser
+          et ne pourra plus être modifiée (une erreur se corrige par un avoir).</p>
+      </div>
+    </div>
+    <div class="fenetre-pied">
+      <span class="espace"></span>
+      <span class="message erreur" id="erreur-facturer"></span>
+      <button type="button" class="bouton secondaire" data-fermer>Annuler</button>
+      <button class="bouton">Créer la facture</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Facture créée : envoi direct par Qonto -->
+<dialog id="fenetre-envoi-qonto" class="petite">
+  <div class="fenetre">
+    <div class="fenetre-entete">
+      <h2 id="titre-envoi-qonto">Facture créée</h2>
+      <button type="button" class="fermer" data-fermer title="Fermer">×</button>
+    </div>
+    <div class="fenetre-corps">
+      <div>
+        <ul class="liste-envoi" id="liste-envoi-qonto"></ul>
+        <p class="aide" style="margin: 12px 0 0" id="aide-envoi-qonto"></p>
+        <p class="message" id="message-envoi-qonto"></p>
+      </div>
+    </div>
+    <div class="fenetre-pied">
+      <span class="espace"></span>
+      <button type="button" class="bouton secondaire" data-fermer id="plus-tard-qonto">Plus tard</button>
+      <button type="button" class="bouton bouton-plateforme" id="envoyer-qonto-devis">
+        <img src="plateformes/qonto-symbole.png" alt="" onerror="this.remove()"><span>Envoyer par Qonto</span></button>
+    </div>
+  </div>
+</dialog>
+
+<datalist id="suggestions-lignes"></datalist>
+
+<script src="commun.js"></script>
+<script src="devis.js"></script>
+</body>
+</html>

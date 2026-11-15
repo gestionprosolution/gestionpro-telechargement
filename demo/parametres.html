@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta name="robots" content="noindex">
+  <script src="demo.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Paramètres · GestionPro</title>
+  <link rel="icon" href="icone.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="app">
+<main class="contenu etroit">
+  <header class="entete-page">
+    <div><h1>Paramètres</h1><p>Informations de l'entreprise, licence et sauvegardes.</p></div>
+  </header>
+
+  <section class="carte" id="entreprise">
+    <div class="carte-entete"><h2>Entreprise</h2></div>
+    <form id="form-entreprise" novalidate></form>
+    <div class="actions fin" style="margin-top: 20px">
+      <span class="message" id="message-entreprise"></span>
+      <button type="button" class="bouton" id="enregistrer">Enregistrer</button>
+    </div>
+  </section>
+
+  <section class="carte" id="messages" hidden>
+    <div class="carte-entete">
+      <div><h2>Messages envoyés</h2>
+        <p class="aide">Textes proposés quand vous envoyez un devis, une facture, une relance ou un bon de commande
+          par e-mail. Tant que vous ne les modifiez pas, GestionPro adapte lui-même le texte à chaque document.
+          Vous pouvez toujours retoucher le message avant de l'envoyer.</p></div>
+    </div>
+    <div id="liste-messages"></div>
+  </section>
+
+  <dialog id="fenetre-message">
+    <form class="fenetre" id="form-message" novalidate>
+      <div class="fenetre-entete"><h2 id="titre-message">Message</h2>
+        <button type="button" class="fermer" data-fermer-message title="Fermer">×</button></div>
+      <div class="fenetre-corps" style="grid-template-columns: 1fr">
+        <div class="champs">
+          <label class="champ c6"><span>Objet</span><input name="objet"></label>
+          <label class="champ c6"><span>Texte</span><textarea name="texte" rows="14"></textarea></label>
+        </div>
+        <div>
+          <p class="aide" style="margin-bottom: 6px">Cliquez sur une information pour l'insérer à l'emplacement du curseur :
+            elle sera remplacée par la valeur du document (numéro, montant…).</p>
+          <div class="variables-message" id="variables-message"></div>
+        </div>
+      </div>
+      <div class="fenetre-pied">
+        <button type="button" class="bouton secondaire" id="retablir-message">Revenir au texte d'origine</button>
+        <span class="espace"></span>
+        <span class="message erreur" id="erreur-message"></span>
+        <button type="button" class="bouton secondaire" data-fermer-message>Annuler</button>
+        <button class="bouton">Enregistrer</button>
+      </div>
+    </form>
+  </dialog>
+
+  <section class="carte" id="licence" hidden>
+    <div class="carte-entete"><h2>Licence</h2></div>
+    <div id="bloc-licence"></div>
+    <p class="actions" style="margin-top: 16px; align-items: center">
+      <span>GestionPro <strong id="version-logiciel"></strong></span>
+      <span class="aide" id="etat-maj"></span>
+      <button type="button" class="lien" id="chercher-maj">Rechercher une mise à jour</button>
+    </p>
+  </section>
+
+  <section class="carte" id="sauvegardes" hidden>
+    <div class="carte-entete">
+      <h2>Sauvegardes</h2>
+      <p>Vos données sont enregistrées uniquement sur cet ordinateur.</p>
+    </div>
+    <div class="ligne-reglage">
+      <div><strong>Sauvegarde automatique</strong><span class="aide" id="etat-sauvegarde"></span></div>
+      <button type="button" class="bouton secondaire" id="ouvrir-sauvegardes">Ouvrir le dossier</button>
+    </div>
+    <div class="ligne-reglage" id="ligne-externe">
+      <div><strong>Copie hors de l'ordinateur</strong>
+        <span class="aide" id="etat-externe"></span>
+        <span class="message" id="message-externe"></span></div>
+      <div class="actions">
+        <button type="button" class="bouton secondaire" id="copier-externe" hidden>Copier maintenant</button>
+        <button type="button" class="bouton" id="choisir-externe">Choisir l'emplacement</button>
+      </div>
+    </div>
+    <div class="choix-externe" id="choix-externe" hidden>
+      <p class="aide">Une copie est déposée chaque jour (à l'ouverture du logiciel) dans « GestionPro Sauvegardes »
+        à cet endroit ; les 30 dernières sont gardées. Choisissez une clé USB ou un disque externe (à laisser
+        branché ou à brancher régulièrement), ou un dossier synchronisé dans le cloud.</p>
+      <div class="actions" id="emplacements-proposes" style="flex-wrap: wrap; margin: 10px 0"></div>
+      <div class="actions">
+        <input id="dossier-externe" placeholder="Dossier, ex : E:\ ou C:\Users\…\OneDrive" style="flex: 1">
+        <button type="button" class="bouton secondaire" id="parcourir-externe">Parcourir…</button>
+        <button type="button" class="bouton" id="valider-externe">Utiliser ce dossier</button>
+      </div>
+      <button type="button" class="lien discret" id="retirer-externe" hidden style="margin-top: 8px">Ne plus faire de copie externe</button>
+    </div>
+    <div class="ligne-reglage">
+      <div><strong>Copie manuelle</strong>
+        <span class="aide">À copier sur une clé USB ou un autre ordinateur, par exemple chaque mois.</span></div>
+      <a class="bouton secondaire" href="/api/sauvegardes/telecharger">Télécharger une sauvegarde</a>
+    </div>
+    <div class="ligne-reglage">
+      <div><strong>Restaurer</strong>
+        <span class="aide">Remplace les données actuelles par une sauvegarde (une copie de sécurité est faite avant).
+          Sert aussi à passer sur un nouvel ordinateur.</span>
+        <span class="message" id="message-restauration"></span></div>
+      <label class="bouton secondaire">Choisir une sauvegarde
+        <input type="file" id="fichier-restauration" accept=".zip,application/zip" hidden></label>
+    </div>
+    <div class="ligne-reglage">
+      <div><strong>Effacer les données</strong>
+        <span class="aide">Supprime tous les devis, factures et articles du stock. Les informations de
+          l'entreprise et la licence sont conservées. Une sauvegarde est faite juste avant.</span>
+        <span class="message" id="message-effacement"></span></div>
+      <button type="button" class="bouton danger" id="effacer-donnees">Effacer les données</button>
+    </div>
+  </section>
+
+  <section class="carte" id="mon-profil" hidden>
+    <div class="carte-entete"><h2>Mon profil</h2><p id="mon-profil-nom"></p></div>
+    <form id="form-mon-mdp" novalidate>
+      <div class="champs">
+        <label class="champ c2"><span>Mot de passe actuel</span><input name="actuel" type="password" autocomplete="current-password"></label>
+        <label class="champ c2"><span>Nouveau mot de passe</span><input name="nouveau" type="password" autocomplete="new-password"></label>
+        <label class="champ c2"><span>Confirmation</span><input name="confirmation" type="password" autocomplete="new-password"></label>
+      </div>
+      <div class="actions" style="margin-top: 12px">
+        <button class="bouton secondaire">Changer mon mot de passe</button>
+        <span class="message" id="message-mon-mdp"></span>
+      </div>
+    </form>
+  </section>
+
+  <section class="carte" id="utilisateurs" hidden>
+    <div class="carte-entete">
+      <div><h2>Utilisateurs et accès</h2>
+        <p class="aide">Chaque personne a son profil et son mot de passe ; vous choisissez les onglets du menu qu'elle peut
+          ouvrir. Les administrateurs ont accès à tout, Paramètres compris.</p></div>
+      <button type="button" class="bouton secondaire petit" id="ajouter-utilisateur" hidden>Ajouter un utilisateur</button>
+    </div>
+    <div id="profils-inactifs" hidden>
+      <p class="aide" style="margin-bottom: 12px">Pour l'instant, GestionPro s'ouvre sans connexion. Créez votre profil
+        d'administrateur : un mot de passe sera ensuite demandé à l'ouverture, et vous pourrez ajouter les profils de
+        vos collègues. Indispensable pour travailler à plusieurs, et pour le réseau du bureau.</p>
+      <form id="form-activer" novalidate>
+        <div class="champs">
+          <label class="champ c2"><span>Votre nom</span><input name="nom" autocomplete="name"></label>
+          <label class="champ c2"><span>Mot de passe</span><input name="mot_de_passe" type="password" autocomplete="new-password"></label>
+          <label class="champ c2"><span>Confirmation</span><input name="confirmation" type="password" autocomplete="new-password"></label>
+        </div>
+        <div class="actions" style="margin-top: 12px">
+          <button class="bouton">Créer mon profil administrateur</button>
+          <span class="message" id="message-activer"></span>
+        </div>
+      </form>
+    </div>
+    <div id="profils-actifs" hidden>
+      <p class="aide" id="limite-utilisateurs" hidden style="margin-bottom: 10px"></p>
+      <div class="defile">
+        <table class="tableau" id="table-utilisateurs">
+          <thead><tr><th>Nom</th><th>Accès</th><th></th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <button type="button" class="lien discret" id="desactiver-profils" style="margin-top: 12px">Supprimer tous les
+        profils (GestionPro s'ouvrira de nouveau sans connexion)</button>
+      <span class="message" id="message-profils"></span>
+    </div>
+    <div class="encart alerte" id="bloc-code" hidden style="margin-top: 14px">
+      <strong>Code de secours</strong> — si l'administrateur oublie son mot de passe, c'est le seul moyen de retrouver
+      l'accès. Notez-le et rangez-le en lieu sûr (il ne sera plus affiché) :
+      <p class="code-secours" id="code-secours"></p>
+    </div>
+  </section>
+
+  <section class="carte" id="reseau" hidden>
+    <div class="carte-entete">
+      <div><h2>Réseau du bureau</h2>
+        <p class="aide">Pour travailler à plusieurs, chacun sur son ordinateur, sur les mêmes données : un ordinateur
+          du bureau devient le poste principal (il garde les données), les autres s'y connectent par le réseau
+          (Wi-Fi ou câble).</p></div>
+    </div>
+    <div id="reseau-contenu"></div>
+    <span class="message" id="message-reseau"></span>
+  </section>
+
+  <dialog id="fenetre-utilisateur" class="petite">
+    <form class="fenetre" id="form-utilisateur" novalidate>
+      <div class="fenetre-entete"><h2 id="titre-utilisateur">Nouvel utilisateur</h2>
+        <button type="button" class="fermer" data-fermer-utilisateur title="Fermer">×</button></div>
+      <div class="fenetre-corps" style="grid-template-columns: 1fr">
+        <div>
+          <div class="champs">
+            <label class="champ c6"><span>Nom</span><input name="nom" placeholder="Prénom Nom"></label>
+            <label class="champ c6"><span id="libelle-mdp-utilisateur">Mot de passe</span>
+              <input name="mot_de_passe" type="password" autocomplete="new-password"></label>
+            <label class="champ c6 case"><input name="admin" type="checkbox">
+              <span>Administrateur (accès à tout, Paramètres compris)</span></label>
+          </div>
+          <fieldset class="droits-profil" id="droits-profil">
+            <legend>Onglets du menu autorisés</legend>
+            <div id="cases-droits"></div>
+          </fieldset>
+          <label class="case" style="margin-top: 12px"><input name="valide_factures" type="checkbox">
+            <span>Valide les factures reçues (boîte de réception, notes de frais) : une facture n'est acceptée
+              que lorsque toutes les personnes cochées l'ont acceptée. Il en faut au moins une.</span></label>
+          <label class="case" style="margin-top: 8px"><input name="actif" type="checkbox" checked>
+            <span>Profil actif (décochez pour bloquer l'accès sans supprimer le profil)</span></label>
+        </div>
+      </div>
+      <div class="fenetre-pied">
+        <button type="button" class="bouton danger" id="supprimer-utilisateur" hidden>Supprimer</button>
+        <span class="espace"></span>
+        <span class="message erreur" id="erreur-utilisateur"></span>
+        <button type="button" class="bouton secondaire" data-fermer-utilisateur>Annuler</button>
+        <button class="bouton">Enregistrer</button>
+      </div>
+    </form>
+  </dialog>
+
+  <section class="carte" id="compte" hidden>
+    <div class="carte-entete"><h2>Compte</h2><p id="compte-email"></p></div>
+    <div class="ligne-reglage" id="ligne-abonnement" hidden>
+      <div><strong>Abonnement</strong><span class="aide" id="etat-abonnement"></span></div>
+      <a class="bouton secondaire" href="abonnement.html">Gérer</a>
+    </div>
+    <form class="ligne-reglage" id="form-mdp">
+      <div><strong>Mot de passe</strong>
+        <div class="champs" style="margin-top: 8px">
+          <label class="champ"><span>Actuel</span><input name="actuel" type="password" autocomplete="current-password" required></label>
+          <label class="champ"><span>Nouveau</span><input name="nouveau" type="password" autocomplete="new-password" minlength="8" required></label>
+        </div>
+        <span class="message" id="message-mdp"></span></div>
+      <button class="bouton secondaire">Modifier</button>
+    </form>
+    <div class="ligne-reglage">
+      <div><strong>Exporter mes données</strong><span class="aide">Archive ZIP de tous vos devis et factures.</span></div>
+      <a class="bouton secondaire" href="/api/auth/export">Télécharger</a>
+    </div>
+    <div class="ligne-reglage">
+      <div><strong>Supprimer le compte</strong><span class="aide">Efface définitivement le compte et toutes les données.</span></div>
+      <button type="button" class="bouton danger" id="supprimer-compte">Supprimer</button>
+    </div>
+  </section>
+</main>
+
+<script src="commun.js"></script>
+<script src="composants.js"></script>
+<script src="parametres.js"></script>
+</body>
+</html>

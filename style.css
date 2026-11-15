@@ -124,6 +124,7 @@ table.comparaison td:first-child { color: var(--gris); }
 .contact p { color: var(--bleu-texte); margin: 0 auto 24px; }
 .contact .coordonnees { margin: 20px 0 0; font-size: 17px; }
 .contact .coordonnees a { color: var(--blanc); }
+.contact .actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
 
 /* Fenêtre « Demander une démonstration » */
 dialog#fenetre-demo { border: 0; padding: 0; width: min(640px, 100% - 24px); border-top: 6px solid var(--bleu);

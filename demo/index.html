@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta name="robots" content="noindex">
+  <script src="demo.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Accueil · GestionPro</title>
+  <link rel="icon" href="icone.png">
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="app">
+<main class="contenu">
+  <header class="entete-page">
+    <div><h1 id="titre">Accueil</h1><p id="date-du-jour"></p></div>
+  </header>
+
+  <section class="tuiles" id="tuiles" hidden></section>
+
+  <section class="carte a-faire" id="a-faire" style="margin-bottom: 20px" hidden>
+    <div class="carte-entete"><h2>À faire</h2><span class="aide" id="resume-a-faire"></span></div>
+    <div id="liste-a-faire"></div>
+  </section>
+
+  <section class="services">
+    <a class="service" href="agenda.html">
+      <h2>Agenda</h2>
+      <p>Vos rendez-vous de la semaine et les échéances de factures à régler.</p>
+      <div class="indicateurs" id="stats-agenda"></div>
+      <span class="ouvrir">Ouvrir l'agenda</span>
+    </a>
+    <a class="service" href="contacts.html">
+      <h2>Contacts</h2>
+      <p>L'annuaire de vos clients et fournisseurs, avec leur historique.</p>
+      <div class="indicateurs" id="stats-contacts"></div>
+      <span class="ouvrir">Voir les contacts</span>
+    </a>
+    <a class="service" href="devis.html">
+      <h2>Clients</h2>
+      <p>Devis, factures, avoirs et relances : tout ce qui concerne vos ventes.</p>
+      <div class="indicateurs" id="stats-devis"></div>
+      <span class="ouvrir">Créer un devis</span>
+    </a>
+    <a class="service" href="factures.html?espace=fournisseurs">
+      <h2>Fournisseurs</h2>
+      <p>Factures, notes de frais, assurances et frais bancaires, bons de commande : vos dépenses.</p>
+      <div class="indicateurs" id="stats-factures"></div>
+      <span class="ouvrir">Voir les dépenses</span>
+    </a>
+    <a class="service" href="stock.html">
+      <h2>Stock</h2>
+      <p>Suivez vos articles : les devis acceptés et les factures réglées mettent le stock à jour.</p>
+      <div class="indicateurs" id="stats-stock"></div>
+      <span class="ouvrir">Voir le stock</span>
+    </a>
+  </section>
+
+  <section class="carte" style="margin-top: 20px" id="carte-rdv" hidden>
+    <div class="carte-entete">
+      <h2>Prochains rendez-vous</h2>
+      <a class="lien" href="agenda.html">Ouvrir l'agenda</a>
+    </div>
+    <table class="tableau">
+      <tbody id="prochains-rdv"></tbody>
+    </table>
+  </section>
+
+  <section class="carte" style="margin-top: 20px" id="carte-echeances" hidden>
+    <div class="carte-entete">
+      <h2>Prochaines échéances</h2>
+      <a class="lien" href="factures.html">Toutes les factures</a>
+    </div>
+    <table class="tableau">
+      <tbody id="echeances"></tbody>
+    </table>
+  </section>
+</main>
+
+<script src="commun.js"></script>
+<script src="accueil.js"></script>
+</body>
+</html>

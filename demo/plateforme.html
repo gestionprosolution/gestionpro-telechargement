@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta name="robots" content="noindex">
+  <script src="demo.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Facture électronique · GestionPro</title>
+  <link rel="icon" href="icone.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="app">
+<main class="contenu">
+  <header class="entete-page">
+    <div><h1>Facture électronique</h1>
+      <p>Toutes vos factures partent par Qonto, au même format : aux professionnels par la facture électronique,
+        aux particuliers par e-mail. Suivez ici leur réception.</p></div>
+    <div class="actions" id="qonto-relie" hidden>
+      <span class="plateforme-etat"><img src="plateformes/qonto-symbole.png" alt="" onerror="this.remove()">
+        <span id="qonto-etat"></span></span>
+      <button type="button" class="bouton secondaire" id="qonto-verifier">Vérifier la connexion</button>
+      <button type="button" class="lien discret" id="qonto-deconnecter">Déconnecter</button>
+    </div>
+  </header>
+  <p class="message" id="qonto-message"></p>
+  <p class="encart" id="qonto-logo" hidden style="margin-bottom: 16px">Les factures envoyées par Qonto sont mises en
+    page par Qonto : pour qu'elles portent le même logo que vos devis, ajoutez-le aussi dans Qonto, dans les réglages
+    de personnalisation de vos factures clients (une seule fois). Qonto ne permet pas encore à GestionPro de le
+    faire pour vous. <button type="button" class="lien" id="qonto-logo-fait">C'est fait</button></p>
+
+  <!-- Aucune plateforme reliée -->
+  <section class="carte" id="qonto" hidden>
+    <div class="carte-entete">
+      <div class="plateforme-marque">
+        <!-- Logo officiel de Qonto (kit média qonto.com/fr/press/kit) ; sans le fichier, le nom s'affiche seul -->
+        <img src="plateformes/qonto.png" alt="Qonto" class="logo-plateforme" onerror="this.hidden = true; this.nextElementSibling.hidden = false">
+        <strong class="nom-plateforme" hidden>Qonto</strong>
+        <div><h2>Reliez votre compte Qonto</h2>
+          <p class="aide">Pour envoyer vos factures et recevoir celles de vos fournisseurs directement depuis GestionPro.</p></div>
+      </div>
+      <button type="button" class="bouton bouton-plateforme" id="qonto-connecter">
+        <img src="plateformes/qonto-symbole.png" alt="" onerror="this.remove()"><span>Se connecter avec Qonto</span></button>
+    </div>
+  </section>
+
+  <div class="kpis" id="resume-envoi"></div>
+
+  <!-- Envois à régler, au cas par cas -->
+  <section class="carte a-regler" id="carte-a-regler" hidden>
+    <div class="carte-entete">
+      <div><h2>À régler <span class="pastille-menu rouge" id="nb-a-regler"></span></h2>
+        <p>Ces factures ne sont pas parties, ou votre client les a refusées.</p></div>
+    </div>
+    <div class="defile">
+      <table class="tableau"><tbody id="table-a-regler"></tbody></table>
+    </div>
+  </section>
+
+  <section class="carte" id="depot">
+    <div class="carte-entete">
+      <div><h2>À envoyer</h2>
+        <p id="aide-depot">Qonto émet la même facture (numéro, lignes, montants) : aux professionnels par la facture électronique, aux particuliers par e-mail.</p></div>
+      <button type="button" class="bouton bouton-plateforme" id="envoyer-qonto" disabled>
+        <img src="plateformes/qonto-symbole.png" alt="" onerror="this.remove()"><span>Envoyer par Qonto</span></button>
+      <!-- Sans Qonto relié : la facture part par une autre plateforme (ou autrement), puis on confirme l'envoi -->
+      <div id="depot-manuel" style="display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end" hidden>
+        <button type="button" class="bouton secondaire" id="telecharger-depot" disabled
+          title="Les PDF au format Factur-X, à déposer sur votre plateforme">Télécharger les factures</button>
+        <button type="button" class="bouton" id="confirmer-envoi" disabled
+          title="Les factures sélectionnées passent dans « Envoyées »">Confirmer l'envoi des factures</button>
+      </div>
+    </div>
+    <div class="defile">
+      <table class="tableau" id="table-depot">
+        <thead><tr><th style="width: 32px"><input type="checkbox" id="tout-cocher" title="Tout sélectionner"></th>
+          <th>Date</th><th>N°</th><th>Client</th><th class="droite">Montant TTC</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <p class="vide" id="depot-vide" hidden>Aucune facture à envoyer : tout est parti.</p>
+    <p class="message" id="message-envoi"></p>
+  </section>
+
+  <section class="carte" id="carte-envoyees">
+    <div class="carte-entete">
+      <div><h2>Envoyées</h2>
+        <p>Le statut se met à jour à chaque ouverture de cette page.</p></div>
+    </div>
+    <div class="defile">
+      <table class="tableau" id="table-envoyees">
+        <thead><tr><th>N°</th><th>Client</th><th class="droite">Montant TTC</th><th>Statut</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <p class="vide" id="envoyees-vide" hidden>Aucune facture envoyée pour l'instant.</p>
+  </section>
+
+  <section class="carte" id="declaration">
+    <div class="carte-entete">
+      <div><h2>Ventes aux particuliers à déclarer</h2>
+        <p class="aide">Totaux à reporter sur votre plateforme pour la période demandée (selon votre régime de TVA :
+          tous les mois, tous les deux mois…).</p></div>
+      <form class="actions" id="form-periode">
+        <select id="periode-rapide" style="width: auto">
+          <option value="mois-precedent">Mois précédent</option>
+          <option value="mois">Mois en cours</option>
+          <option value="bimestre-precedent">Deux mois précédents</option>
+          <option value="libre">Autre période…</option>
+        </select>
+        <input type="date" id="debut" hidden>
+        <input type="date" id="fin" hidden>
+        <a class="bouton secondaire" id="export-csv">Exporter (CSV)</a>
+      </form>
+    </div>
+    <p class="aide" id="resume-periode"></p>
+    <div class="deux-colonnes" style="margin-top: 12px">
+      <div>
+        <h3>Ventes (date de facture)</h3>
+        <table class="tableau compact" id="totaux-ventes"></table>
+      </div>
+      <div>
+        <h3>Encaissements (date de paiement)</h3>
+        <table class="tableau compact" id="totaux-encaissements"></table>
+      </div>
+    </div>
+    <details class="plus" style="margin-top: 14px">
+      <summary>Détail jour par jour</summary>
+      <table class="tableau compact" id="detail-jours"></table>
+    </details>
+  </section>
+</main>
+
+<!-- Confirmation de l'envoi par Qonto -->
+<dialog id="fenetre-envoi" class="petite">
+  <form class="fenetre" method="dialog" id="form-envoi">
+    <div class="fenetre-entete">
+      <h2 id="titre-envoi">Envoyer par Qonto</h2>
+      <button type="button" class="fermer" data-fermer title="Fermer">×</button>
+    </div>
+    <div class="fenetre-corps">
+      <div>
+        <ul class="liste-envoi" id="liste-envoi"></ul>
+        <p class="aide" style="margin: 12px 0">Qonto émet chaque facture à l'identique et l'envoie : à la plateforme du client
+          professionnel, par e-mail au particulier (vous en recevez une copie). Une fois émise, elle est officielle : elle ne peut plus être modifiée, seulement annulée par un avoir.</p>
+        <label class="case"><input type="checkbox" id="ne-plus-rappeler"> Ne plus me le rappeler</label>
+      </div>
+    </div>
+    <div class="fenetre-pied">
+      <span class="espace"></span>
+      <button type="button" class="bouton secondaire" data-fermer>Annuler</button>
+      <button class="bouton" value="envoyer">Envoyer</button>
+    </div>
+  </form>
+</dialog>
+
+<script src="commun.js"></script>
+<script src="plateforme.js"></script>
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta name="robots" content="noindex">
+  <script src="demo.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Facture électronique · GestionPro</title>
+  <link rel="icon" href="icone.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="bienvenue">
+  <div class="bienvenue-entete"><img src="icone.png" alt=""> GestionPro</div>
+  <h1>Avez-vous une plateforme de facturation ?</h1>
+  <p class="intro">Vos factures partent au format électronique par une plateforme de facturation : GestionPro
+    les y dépose pour vous, d'un clic. Pour l'instant, GestionPro fonctionne avec Qonto.</p>
+
+  <div class="choix-plateforme" id="choix">
+    <section class="carte">
+      <h2>Oui, j'en ai une</h2>
+      <div class="plateformes-liste">
+        <div class="option"><strong>Qonto</strong>
+          <button type="button" class="bouton petit" data-relier>Se connecter</button></div>
+        <div class="option bientot"><span>Autres plateformes</span><span class="aide">Bientôt</span></div>
+      </div>
+      <p class="aide">Votre plateforme n'est pas dans la liste ? Vous pouvez aussi ouvrir un compte Qonto
+        gratuit à côté, juste pour vos factures.</p>
+    </section>
+    <section class="carte">
+      <span class="gratuit">Gratuit</span>
+      <h2>Non, pas encore</h2>
+      <p>Prenez <strong>Qonto</strong> : sa facturation électronique est gratuite, avec ou sans compte bancaire
+        Qonto. L'inscription prend quelques minutes.</p>
+      <ol class="etapes">
+        <li>Créez votre compte Qonto Facturation.</li>
+        <li>Revenez ici et cliquez sur « J'ai mon compte : le relier ».</li>
+      </ol>
+      <a class="bouton secondaire" href="https://qonto.com/fr/invoicing/free-software" target="_blank"
+        rel="noopener">Créer mon compte Qonto gratuit</a>
+      <button type="button" class="bouton" data-relier>J'ai mon compte : le relier</button>
+    </section>
+  </div>
+
+  <p class="message" id="message-qonto" style="margin-top: 16px" hidden></p>
+
+  <div class="actions" style="justify-content: space-between; align-items: center; margin-top: 22px">
+    <a href="index.html" class="bouton-lien" id="plus-tard">Plus tard (Ventes &gt; Facture électronique)</a>
+    <a href="index.html" class="bouton grand" id="continuer" hidden>Continuer</a>
+  </div>
+</main>
+
+<script src="commun.js"></script>
+<script>
+  (async () => {
+    session = await apiJson("/api/auth/moi");
+    if (session.mode !== "local") return (location.href = "index.html");
+    if (session.verrouille) return (location.href = "deverrouiller.html?retour=bienvenue-plateforme.html");
+    if (!session.licence.acces) return (location.href = "licence.html");
+
+    const message = (texte, type = "ok") => {
+      $("#message-qonto").textContent = texte;
+      $("#message-qonto").className = `message ${type}`;
+      $("#message-qonto").hidden = false;
+    };
+    const relie = () => {
+      message("Compte Qonto relié : vos factures partiront par Qonto, depuis Ventes > Facture électronique.");
+      $("#plus-tard").hidden = true;
+      $("#continuer").hidden = false;
+      document.querySelectorAll("[data-relier]").forEach((b) => { b.disabled = true; b.textContent = "Relié"; });
+    };
+    if ((await apiJson("/api/plateforme/qonto").catch(() => ({}))).relie) relie();
+
+    document.querySelectorAll("[data-relier]").forEach((bouton) => bouton.addEventListener("click", async () => {
+      try {
+        const avant = (await apiJson("/api/plateforme/qonto")).relie_a;
+        const { url } = await envoyerJson("/api/plateforme/qonto/connexion", "POST", {});
+        window.open(url, "_blank");   // page Qonto dans le navigateur habituel
+        message("Connectez-vous dans la page Qonto qui vient de s'ouvrir, puis cliquez sur « Autoriser ». "
+          + "Cette page se mettra à jour toute seule.");
+        for (let i = 0; i < 120; i++) {   // jusqu'à 10 minutes (durée de validité du code Qonto)
+          await new Promise((r) => setTimeout(r, 5000));
+          const q = await apiJson("/api/plateforme/qonto").catch(() => null);
+          if (q?.relie && q.relie_a !== avant) return relie();
+        }
+      } catch (err) {
+        message(err.message, "erreur");
+      }
+    }));
+  })();
+</script>
+</body>
+</html>

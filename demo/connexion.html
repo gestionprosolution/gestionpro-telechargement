@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta name="robots" content="noindex">
+  <script src="demo.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Connexion · GestionPro</title>
+  <link rel="icon" href="icone.png">
+  
+  <meta name="theme-color" content="#1f4e79">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="page-connexion">
+<div class="connexion">
+  <section class="vitrine">
+    <div class="vitrine-marque"><img src="icone.png" alt=""> GestionPro</div>
+    <h1>Vos devis et factures, simplement.</h1>
+    <ul>
+      <li><strong>Des devis professionnels en une minute</strong>
+        <span>Tapez vos notes, obtenez un PDF à votre logo.</span></li>
+      <li><strong>Toutes vos factures au même endroit</strong>
+        <span>Ce qu'il reste à payer, à encaisser, et ce qui est en retard.</span></li>
+      <li><strong>Rien à installer</strong>
+        <span>Sur ordinateur, tablette ou téléphone. Ajoutez une icône sur votre Bureau en un clic.</span></li>
+    </ul>
+    <p class="offre-vitrine" id="offre" hidden></p>
+  </section>
+
+  <section class="carte formulaire-connexion">
+    <div class="onglets pleine-largeur" id="onglets-connexion">
+      <button type="button" data-vue="connexion" class="actif">Se connecter</button>
+      <button type="button" data-vue="inscription">Créer un compte</button>
+    </div>
+
+    <form id="form-connexion" class="pile">
+      <label>Adresse e-mail<input name="email" type="email" autocomplete="username" required></label>
+      <label>Mot de passe<input name="mot_de_passe" type="password" autocomplete="current-password" required></label>
+      <button class="bouton principal">Se connecter</button>
+      <button type="button" class="lien" id="oubli">Mot de passe oublié ?</button>
+      <p class="aide" id="aide-oubli" hidden></p>
+    </form>
+
+    <form id="form-inscription" class="pile" hidden>
+      <label>Nom de votre entreprise<input name="nom_entreprise" autocomplete="organization" required></label>
+      <label>Adresse e-mail<input name="email" type="email" autocomplete="username" required></label>
+      <label>Mot de passe <small>(8 caractères minimum)</small>
+        <input name="mot_de_passe" type="password" autocomplete="new-password" minlength="8" required></label>
+      <label class="case"><input name="accord" type="checkbox" required>
+        <span>J'accepte la <a href="confidentialite.html" target="_blank">politique de confidentialité</a></span></label>
+      <button class="bouton principal">Créer mon compte gratuitement</button>
+    </form>
+
+    <p class="erreur" id="erreur" hidden></p>
+    <button type="button" class="bouton secondaire installer-app" hidden onclick="installerApplication()">
+      ⬇ Installer l'application sur cet appareil
+    </button>
+  </section>
+</div>
+
+<script src="commun.js"></script>
+<script src="connexion.js"></script>
+</body>
+</html>

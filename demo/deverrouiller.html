@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta name="robots" content="noindex">
+  <script src="demo.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Connexion · GestionPro</title>
+  <link rel="icon" href="icone.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="bienvenue" style="max-width: 460px">
+  <div class="bienvenue-entete"><img src="icone.png" alt=""> GestionPro</div>
+  <h1 id="titre">Qui êtes-vous ?</h1>
+  <p class="intro" id="intro">Choisissez votre profil, puis saisissez votre mot de passe.</p>
+
+  <section class="carte">
+    <form id="form-mdp" novalidate>
+      <div class="profils-connexion" id="profils"></div>
+      <label class="champ" id="champ-mdp" hidden><span id="libelle-mdp">Mot de passe</span>
+        <input name="mot_de_passe" type="password" autocomplete="current-password"></label>
+      <p class="message erreur" id="erreur" style="margin-top: 8px"></p>
+      <div class="actions" style="margin-top: 14px; justify-content: space-between">
+        <button type="button" class="lien discret" id="oubli">Mot de passe oublié ?</button>
+        <button class="bouton" id="se-connecter" hidden>Se connecter</button>
+      </div>
+    </form>
+
+    <form id="form-secours" novalidate hidden>
+      <p class="aide" style="margin-bottom: 12px">Vous n'êtes pas administrateur ? Demandez à l'administrateur de
+        vous choisir un nouveau mot de passe (Paramètres > Utilisateurs).</p>
+      <p class="aide" style="margin-bottom: 12px">Administrateur : saisissez le code de secours donné à la création
+        des profils, puis choisissez un nouveau mot de passe.</p>
+      <label class="champ"><span>Code de secours</span><input name="code" placeholder="XXXX-XXXX-XXXX-XXXX" autocomplete="off"></label>
+      <label class="champ" style="margin-top: 10px"><span>Nouveau mot de passe</span>
+        <input name="nouveau" type="password" autocomplete="new-password"></label>
+      <p class="message erreur" id="erreur-secours" style="margin-top: 8px"></p>
+      <div class="actions" style="margin-top: 14px; justify-content: space-between">
+        <button type="button" class="lien discret" id="retour-mdp">Retour</button>
+        <button class="bouton">Changer le mot de passe</button>
+      </div>
+    </form>
+
+    <div id="nouveau-code" hidden>
+      <p id="texte-nouveau-code"></p>
+      <p class="code-secours" id="code"></p>
+      <p class="aide">Notez-le et rangez-le en lieu sûr : il ne sera plus affiché.</p>
+      <div class="actions fin" style="margin-top: 14px"><a class="bouton" id="continuer">Continuer</a></div>
+    </div>
+  </section>
+  <p class="aide">Sans mot de passe ni code de secours, les données restent inaccessibles : contactez
+    le vendeur du logiciel.</p>
+</main>
+
+<script src="commun.js"></script>
+<script>
+  const retour = (() => {
+    const r = new URLSearchParams(location.search).get("retour") || "index.html";
+    return /^[a-z-]+\.html(\?.*)?$/i.test(r) ? r : "index.html";  // page de l'application uniquement
+  })();
+  let choisi = null;
+
+  function choisir(id, nom) {
+    choisi = id;
+    $$("#profils button").forEach((b) => b.classList.toggle("actif", b.dataset.id === id));
+    $("#champ-mdp").hidden = $("#se-connecter").hidden = false;
+    $("#libelle-mdp").textContent = `Mot de passe de ${nom}`;
+    $("#erreur").textContent = "";
+    const champ = $("#form-mdp").elements.mot_de_passe;
+    champ.value = "";
+    champ.focus();
+  }
+
+  (async () => {
+    const etat = await apiJson("/api/acces");
+    if (etat.deverrouille) return (location.href = retour);
+    $("#profils").innerHTML = etat.utilisateurs.map((u) =>
+      `<button type="button" class="profil" data-id="${u.id}" data-nom="${echapper(u.nom)}"><span class="initiale">${echapper(u.nom.trim().charAt(0).toUpperCase())}</span>
+        ${echapper(u.nom)}</button>`).join("");
+    $$("#profils button").forEach((b) => (b.onclick = () => choisir(b.dataset.id, b.dataset.nom)));
+    if (etat.utilisateurs.length === 1) choisir(etat.utilisateurs[0].id, etat.utilisateurs[0].nom);
+  })();
+
+  $("#form-mdp").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (!choisi) return ($("#erreur").textContent = "Choisissez votre profil.");
+    try {
+      await envoyerJson("/api/acces/connexion", "POST", { id: choisi, mot_de_passe: e.target.elements.mot_de_passe.value });
+      location.href = retour;
+    } catch (err) {
+      $("#erreur").textContent = err.message;
+      e.target.elements.mot_de_passe.select();
+    }
+  });
+  $("#oubli").onclick = () => { $("#form-mdp").hidden = true; $("#form-secours").hidden = false; };
+  $("#retour-mdp").onclick = () => { $("#form-mdp").hidden = false; $("#form-secours").hidden = true; };
+  $("#form-secours").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const v = e.target.elements;
+    try {
+      const r = await envoyerJson("/api/acces/secours", "POST", { code: v.code.value, nouveau: v.nouveau.value });
+      $("#form-secours").hidden = true;
+      $("#nouveau-code").hidden = false;
+      $("#texte-nouveau-code").innerHTML = `Mot de passe de <strong>${echapper(r.nom)}</strong> changé. Voici le
+        <strong>nouveau code de secours</strong> (l'ancien ne fonctionne plus) :`;
+      $("#code").textContent = r.code_secours;
+      $("#continuer").href = retour;
+    } catch (err) {
+      $("#erreur-secours").textContent = err.message;
+    }
+  });
+</script>
+</body>
+</html>

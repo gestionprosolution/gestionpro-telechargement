@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta name="robots" content="noindex">
+  <script src="demo.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pilotage · GestionPro</title>
+  <link rel="icon" href="icone.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="app">
+<main class="contenu">
+  <header class="entete-page">
+    <div><h1>Pilotage</h1><p id="sous-titre">Votre activité en chiffres.</p></div>
+    <div class="actions">
+    <a class="bouton secondaire" href="/api/export/situation.xlsx" download
+       title="Solde, factures à encaisser et à payer, devis en cours, règlements des 12 derniers mois">Situation financière (Excel)</a>
+    <div class="segments" id="choix-ht" title="La trésorerie reste toujours en TTC : c'est ce qui passe sur le compte.">
+      <button type="button" data-ht="true">Hors taxes</button>
+      <button type="button" data-ht="false">TTC</button>
+    </div>
+    </div>
+  </header>
+
+  <section class="kpis" id="kpis-activite"></section>
+  <section class="kpis" id="kpis-suivi"></section>
+
+  <div class="deux-colonnes">
+    <section class="carte">
+      <div class="carte-entete"><h2>Les 12 derniers mois</h2></div>
+      <div class="histogramme" id="histogramme"></div>
+      <div class="legende"><span><i></i>Facturé</span><span><i class="encaisse"></i>Encaissé</span></div>
+    </section>
+    <section class="carte">
+      <div class="carte-entete"><h2>Meilleurs clients</h2><span class="aide">facturé sur 12 mois</span></div>
+      <div id="meilleurs-clients"></div>
+    </section>
+  </div>
+
+  <section class="carte" style="margin-top: 20px" id="tresorerie">
+    <div class="carte-entete">
+      <div><h2>Trésorerie prévisionnelle</h2>
+        <p class="aide">Ce qui doit rentrer (factures clients) et sortir (factures fournisseurs) selon leurs échéances
+          — toujours en TTC, comme sur le compte bancaire.</p></div>
+      <form class="solde-saisie" id="form-solde">
+        <label class="aide" for="solde">Solde bancaire actuel</label>
+        <input id="solde" type="number" step="0.01" placeholder="ex : 12 500">
+        <button class="bouton secondaire petit">Enregistrer</button>
+      </form>
+    </div>
+    <p class="aide" id="info-solde"></p>
+    <div class="courbe" id="courbe" hidden></div>
+    <div class="defile">
+      <table class="tableau" id="table-tresorerie">
+        <thead><tr><th>Échéance</th><th class="droite">À encaisser</th><th class="droite">À payer</th>
+          <th class="droite">Écart</th><th class="droite" id="col-solde">Solde prévu</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<script src="commun.js"></script>
+<script src="tableau.js"></script>
+</body>
+</html>

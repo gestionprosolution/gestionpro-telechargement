@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta name="robots" content="noindex">
+  <script src="demo.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rejoindre le poste principal · GestionPro</title>
+  <link rel="icon" href="icone.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="bienvenue" style="max-width: 560px">
+  <div class="bienvenue-entete"><img src="icone.png" alt=""> GestionPro</div>
+  <h1>Rejoindre le poste principal</h1>
+  <p class="intro">Cet ordinateur va travailler sur les données du poste principal du bureau, avec votre profil.
+    Les deux ordinateurs doivent être sur le même réseau (Wi-Fi ou câble du bureau), et GestionPro ouvert sur le
+    poste principal.</p>
+
+  <section class="carte">
+    <div class="carte-entete"><h2>Postes trouvés sur le réseau</h2>
+      <button type="button" class="bouton secondaire petit" id="chercher">Chercher à nouveau</button></div>
+    <div id="postes"><p class="aide">Recherche…</p></div>
+
+    <form id="form-adresse" novalidate style="margin-top: 18px">
+      <label class="champ"><span>Ou saisissez son adresse <em>(indiquée sur le poste principal, dans Paramètres >
+        Réseau du bureau)</em></span><input name="adresse" placeholder="ex. PC-BUREAU ou 192.168.1.20"></label>
+      <div class="actions" style="margin-top: 10px; justify-content: space-between">
+        <a class="lien discret" href="index.html">Retour</a>
+        <button class="bouton">Rejoindre</button>
+      </div>
+    </form>
+    <p class="message erreur" id="erreur" style="margin-top: 8px"></p>
+  </section>
+  <p class="aide">Les données déjà saisies sur cet ordinateur ne sont pas supprimées : elles restent de côté. Pour
+    ne plus se connecter au poste principal : <span id="quitter-principal">menu Démarrer de Windows > « GestionPro – réglages réseau »</span>.</p>
+</main>
+
+<script src="commun.js"></script>
+<script>
+  $("#quitter-principal").textContent = QUITTER_PRINCIPAL;
+  async function chercher() {
+    $("#postes").innerHTML = `<p class="aide">Recherche sur le réseau…</p>`;
+    let postes = [];
+    try {
+      postes = (await apiJson("/api/reseau/decouvrir")).postes;
+    } catch (err) {
+      $("#postes").innerHTML = `<p class="message erreur">${echapper(err.message)}</p>`;
+      return;
+    }
+    $("#postes").innerHTML = postes.length ? postes.map((p) => `
+      <div class="ligne-reglage">
+        <div><strong>${echapper(p.entreprise || "GestionPro")}</strong>
+          <span class="aide">Poste principal : ${echapper(p.poste)} · ${echapper(p.adresse)}</span></div>
+        <button type="button" class="bouton" data-adresse="${echapper(p.adresse)}">Rejoindre</button>
+      </div>`).join("")
+      : `<p class="aide">Aucun poste principal trouvé. Vérifiez qu'il est allumé, que GestionPro y est ouvert, et que
+          le partage est activé (Paramètres > Réseau du bureau). Sinon, saisissez son adresse ci-dessous.</p>`;
+  }
+
+  async function rejoindre(adresse) {
+    $("#erreur").textContent = "";
+    try {
+      const r = await envoyerJson("/api/reseau/rejoindre", "POST", { adresse });
+      $("main").innerHTML = `<div class="bienvenue-entete"><img src="icone.png" alt=""> GestionPro</div>
+        <h1>C'est fait</h1><p class="intro">Cet ordinateur s'ouvrira désormais sur le poste principal
+        (${echapper(r.poste)}). Connexion…</p>`;
+      setTimeout(() => (location.href = r.url), 1200);
+    } catch (err) {
+      $("#erreur").textContent = err.message;
+    }
+  }
+
+  $("#chercher").onclick = chercher;
+  $("#postes").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-adresse]");
+    if (b) rejoindre(b.dataset.adresse);
+  });
+  $("#form-adresse").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const adresse = e.target.elements.adresse.value.trim();
+    if (!adresse) return ($("#erreur").textContent = "Saisissez l'adresse du poste principal.");
+    rejoindre(adresse);
+  });
+  chercher();
+</script>
+</body>
+</html>

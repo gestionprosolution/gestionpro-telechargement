@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta name="robots" content="noindex">
+  <script src="demo.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Licence · GestionPro</title>
+  <link rel="icon" href="icone.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="bienvenue">
+  <div class="bienvenue-entete"><img src="icone.png" alt=""> GestionPro</div>
+  <h1 id="titre">Bienvenue</h1>
+  <p class="intro" id="intro">Pour commencer, demandez votre licence : un formulaire, et elle s'active toute seule.</p>
+
+  <section class="carte">
+    <div id="licence"></div>
+  </section>
+
+  <p class="aide" id="lien-reseau" hidden>Votre entreprise utilise déjà GestionPro sur un autre ordinateur du bureau ?
+    <a href="reseau.html">Rejoindre le poste principal</a> (pas de licence à saisir ici).</p>
+  <p class="aide" id="donnees" hidden>Vos données vous appartiennent et restent sur cet ordinateur :
+    <a href="/api/sauvegardes/telecharger">télécharger une sauvegarde</a>.</p>
+</main>
+
+<script src="commun.js"></script>
+<script src="composants.js"></script>
+<script>
+  (async () => {
+    session = await apiJson("/api/auth/moi");
+    if (session.verrouille) return (location.href = "deverrouiller.html?retour=licence.html");
+    if (session.mode !== "local" || session.licence.acces) return (location.href = "index.html");
+    if (session.licence.type === "autre_poste") {  // données recopiées sur un autre ordinateur
+      $("#titre").textContent = "Nouvel ordinateur";
+      $("#intro").textContent = "Vos données sont intactes. La licence étant liée à un ordinateur, il faut une clé pour celui-ci.";
+      $("#donnees").hidden = false;
+    } else if (session.licence.type === "licence") {  // licence limitée arrivée à échéance
+      $("#titre").textContent = "Licence expirée";
+      $("#intro").textContent = "Vos devis et factures sont intacts : ils seront de nouveau accessibles dès l'activation d'une nouvelle licence.";
+      $("#donnees").hidden = false;
+    }
+    if (!session.distant) $("#lien-reseau").hidden = false;
+    monterBlocLicence($("#licence"), () => (location.href = "index.html"));
+  })();
+</script>
+</body>
+</html>

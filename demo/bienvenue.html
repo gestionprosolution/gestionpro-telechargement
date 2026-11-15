@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta name="robots" content="noindex">
+  <script src="demo.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Votre entreprise · GestionPro</title>
+  <link rel="icon" href="icone.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="bienvenue">
+  <div class="bienvenue-entete"><img src="icone.png" alt=""> GestionPro</div>
+  <h1>Votre entreprise</h1>
+  <p class="intro">Licence activée. Renseignez maintenant les informations de votre entreprise :
+    elles figureront sur vos devis. Vous pourrez les modifier à tout moment dans les Paramètres.</p>
+
+  <section class="carte">
+    <form id="entreprise" novalidate></form>
+  </section>
+
+  <div class="actions fin">
+    <span class="message erreur" id="erreur" hidden></span>
+    <button type="button" class="bouton grand" id="commencer">Commencer</button>
+  </div>
+</main>
+
+<script src="commun.js"></script>
+<script src="composants.js"></script>
+<script>
+  (async () => {
+    session = await apiJson("/api/auth/moi");
+    if (session.mode !== "local") return (location.href = "index.html");
+    if (session.verrouille) return (location.href = "deverrouiller.html?retour=bienvenue.html");
+    if (!session.licence.acces) return (location.href = "licence.html");
+
+    const fiche = monterFormulaireEntreprise($("#entreprise"));
+    entreprise = await fiche.charger();
+    appliquerCouleur();
+    $("[name=couleur]").addEventListener("input", (e) => {
+      document.documentElement.style.setProperty("--couleur", e.target.value);
+    });
+
+    $("#entreprise").addEventListener("submit", (e) => { e.preventDefault(); $("#commencer").click(); });
+    $("#commencer").addEventListener("click", async () => {
+      try {
+        if (await fiche.enregistrer()) location.href = "bienvenue-plateforme.html";
+      } catch (err) {
+        $("#erreur").textContent = err.message;
+        $("#erreur").hidden = false;
+      }
+    });
+  })();
+</script>
+</body>
+</html>

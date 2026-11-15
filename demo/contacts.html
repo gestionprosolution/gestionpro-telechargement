@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta name="robots" content="noindex">
+  <script src="demo.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Contacts · GestionPro</title>
+  <link rel="icon" href="icone.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="app">
+<main class="contenu">
+  <header class="entete-page">
+    <div><h1>Contacts</h1><p>Vos clients et fournisseurs. Ceux de vos devis et factures sont ajoutés automatiquement.</p></div>
+    <button type="button" class="bouton" id="nouveau-contact">Nouveau contact</button>
+  </header>
+
+  <section class="carte">
+    <nav class="onglets">
+      <button type="button" class="actif" data-type="client">Clients <span class="compteur" id="nb-client"></span></button>
+      <button type="button" data-type="fournisseur">Fournisseurs <span class="compteur" id="nb-fournisseur"></span></button>
+    </nav>
+    <div class="barre-outils">
+      <span class="aide" id="resume-liste"></span>
+      <input type="search" id="recherche" placeholder="Rechercher un nom, une ville, un téléphone…">
+    </div>
+    <div id="annuaire"></div>
+    <p class="vide" id="vide" hidden></p>
+  </section>
+</main>
+
+<!-- Fiche contact -->
+<dialog id="fenetre">
+  <form class="fenetre" id="form-contact" novalidate>
+    <div class="fenetre-entete">
+      <h2 id="titre-fiche">Nouveau contact</h2>
+      <button type="button" class="fermer" data-fermer title="Fermer">×</button>
+    </div>
+    <div class="fenetre-corps" id="corps-fiche">
+      <div>
+        <div class="sens" style="margin-bottom: 16px">
+          <label class="case"><input type="radio" name="type" value="client" checked> Client</label>
+          <label class="case"><input type="radio" name="type" value="fournisseur"> Fournisseur</label>
+        </div>
+        <div class="champs">
+          <label class="champ c4"><span>Nom ou raison sociale</span><input name="nom" required></label>
+          <label class="champ c2"><span>Interlocuteur</span><input name="personne"></label>
+          <label class="champ"><span>Téléphone</span><input name="telephone" type="tel"></label>
+          <label class="champ"><span>E-mail</span><input name="email" type="email"></label>
+          <label class="champ c6"><span>Adresse</span><input name="adresse"></label>
+          <label class="champ c2"><span>Code postal</span><input name="code_postal"></label>
+          <label class="champ c4"><span>Ville</span><input name="ville"></label>
+          <label class="champ"><span>SIREN ou SIRET</span><input name="siret"></label>
+          <label class="champ"><span>N° de TVA intracommunautaire</span><input name="tva_intracom"></label>
+          <label class="champ c6 case"><input name="professionnel" type="checkbox"> Client professionnel (entreprise) :
+            ses factures sont à déposer sur la plateforme de facture électronique</label>
+          <label class="champ c6"><span>Notes</span><textarea name="notes" rows="3"></textarea></label>
+        </div>
+      </div>
+      <div id="activite"></div>
+    </div>
+    <div class="fenetre-pied">
+      <button type="button" class="bouton danger" id="supprimer">Supprimer</button>
+      <button type="button" class="bouton secondaire" id="photos-contact">Photos</button>
+      <span class="espace"></span>
+      <span class="message erreur" id="erreur"></span>
+      <button type="button" class="bouton secondaire" data-fermer>Annuler</button>
+      <button class="bouton">Enregistrer</button>
+    </div>
+  </form>
+</dialog>
+
+<script src="commun.js"></script>
+<script src="contacts.js"></script>
+</body>
+</html>

@@ -28,7 +28,7 @@
       <a href="#tarif">Tarif</a>
       <a href="#telecharger">Télécharger</a>
     </nav>
-    <a class="bouton petit ouvrir-demo" href="#contact">Demander une démo</a>
+    <a class="bouton petit" href="demo/index.html">Démo gratuite en ligne</a>
   </div>
 </header>
 
@@ -40,7 +40,7 @@
     <p class="sous-titre">Le logiciel de devis, de factures et de gestion des petites entreprises :
       commerces, services, indépendants.</p>
     <div class="actions">
-      <a class="bouton blanc ouvrir-demo" href="#contact">Demander une démonstration</a>
+      <a class="bouton blanc" href="demo/index.html">Consulter la démo gratuite en ligne</a>
       <a class="bouton contour" href="documents/GestionPro-Presentation.pdf" target="_blank">Lire la présentation (PDF)</a>
     </div>
   </div>
@@ -230,11 +230,13 @@
         <li>Renouvellement automatique à votre choix, sans engagement : vous arrêtez quand vous voulez, à la fin de la
           période payée</li>
         <li class="gris"><a href="cgv.html">Conditions générales de vente</a> · droit de rétractation de 14 jours</li>
+        <li class="gris"><a class="ouvrir-devis" href="#contact">Demander un devis</a> pour votre entreprise</li>
       </ul>
     </div>
     <div class="encadre astuce"><strong>Essayer avant de décider</strong>
-      Une démonstration gratuite, chez vous ou à distance, avec vos propres produits et prestations : vous jugez sur
-      pièce, sans engagement.</div>
+      La <a href="demo/index.html">démo gratuite en ligne</a> vous fait parcourir tous les écrans du logiciel, avec
+      les données d'une entreprise fictive : directement dans votre navigateur, sans rien installer ni vous
+      inscrire.</div>
   </div>
 </section>
 
@@ -270,31 +272,37 @@
 <!-- Contact -->
 <section class="contact" id="contact">
   <div class="conteneur">
-    <h2>Parlons de votre entreprise</h2>
-    <p>Une démonstration de quelques minutes, avec vos propres exemples de devis.</p>
-    <a class="bouton blanc ouvrir-demo" href="#contact">Demander une démonstration</a>
+    <h2>Voyez GestionPro par vous-même</h2>
+    <p>Parcourez la démo en ligne : devis, factures, stock, agenda, tableau de bord… sans rien installer.
+      Plusieurs utilisateurs, une question sur votre cas ? Demandez un devis.</p>
+    <div class="actions">
+      <a class="bouton blanc" href="demo/index.html">Consulter la démo gratuite en ligne</a>
+      <a class="bouton contour ouvrir-devis" href="#contact">Demander un devis</a>
+    </div>
     <p class="coordonnees" id="coordonnees"></p>
   </div>
 </section>
 
-<!-- Formulaire de demande de démonstration (envoyé par e-mail via Web3Forms) -->
+<!-- Formulaire de demande de devis (envoyé par e-mail via Web3Forms) -->
 <dialog id="fenetre-demo">
   <form id="form-demo">
     <div class="fenetre-entete">
-      <h2>Demander une démonstration</h2>
+      <h2>Demander un devis</h2>
       <button type="button" class="fermer" data-fermer aria-label="Fermer">×</button>
     </div>
-    <p class="aide">Laissez vos coordonnées : je vous rappelle pour convenir d'un rendez-vous, chez vous ou à
-      distance. Gratuit et sans engagement.</p>
+    <p class="aide">Décrivez votre besoin : je vous réponds rapidement avec un devis adapté à votre entreprise.
+      Gratuit et sans engagement.</p>
     <div class="champs">
       <label>Votre nom<input name="Nom" required autocomplete="name"></label>
       <label>Nom de l'entreprise<input name="Entreprise" autocomplete="organization"></label>
       <label>Votre activité<input name="Métier" placeholder="Commerce, services, conseil…"></label>
       <label>Ville<input name="Ville" autocomplete="address-level2"></label>
+      <label>Nombre d'utilisateurs<input name="Utilisateurs" type="number" min="1" value="1"></label>
+      <label>Ordinateurs<input name="Ordinateurs" placeholder="Windows, Mac, combien…"></label>
       <label>Téléphone<input name="Téléphone" type="tel" required autocomplete="tel"></label>
       <label><span>E-mail <em>(facultatif)</em></span><input name="email" type="email" autocomplete="email"></label>
       <label class="large"><span>Message <em>(facultatif)</em></span>
-        <textarea name="Message" rows="3" placeholder="Vos disponibilités, vos questions…"></textarea></label>
+        <textarea name="Message" rows="3" placeholder="Votre besoin, vos questions, vos disponibilités…"></textarea></label>
     </div>
     <input type="checkbox" name="botcheck" class="piege" tabindex="-1" autocomplete="off" aria-hidden="true">
     <p class="aide petit">Vos informations servent uniquement à vous recontacter (voir
@@ -330,7 +338,7 @@
   const MENTION_PRIX = "TVA non applicable, art. 293 B du CGI";
   // Offre pilote (vide : pas d'offre)
   const OFFRE_PILOTE = "";   // offre de lancement : vue directement avec les clients
-  // Clé Web3Forms (gratuite, reçue par e-mail sur web3forms.com) : sans elle, « Demander une démonstration »
+  // Clé Web3Forms (gratuite, reçue par e-mail sur web3forms.com) : sans elle, « Demander un devis »
   // descend simplement aux coordonnées en bas de page
   const CLE_WEB3FORMS = "0fc3ec8b-8e07-4ad9-80be-9730cf5767da";
   // ──────────────────────────────────────────────────────────────────────────────
@@ -350,11 +358,11 @@
 
   const coordonnees = [TELEPHONE && `<a href="tel:${TELEPHONE.replace(/\s/g, "")}">${TELEPHONE}</a>`,
                        CONTACT && `<a href="mailto:${CONTACT}">${CONTACT}</a>`].filter(Boolean);
-  $("#coordonnees").innerHTML = coordonnees.length ? "Ou directement : " + coordonnees.join(" · ") : "";
+  $("#coordonnees").innerHTML = coordonnees.length ? "Une question ? " + coordonnees.join(" · ") : "";
 
-  // Formulaire de démonstration : envoyé par e-mail à l'adresse liée à la clé Web3Forms
+  // Formulaire de demande de devis : envoyé par e-mail à l'adresse liée à la clé Web3Forms
   const fenetre = $("#fenetre-demo"), formDemo = $("#form-demo"), messageEnvoi = $("#message-envoi");
-  document.querySelectorAll(".ouvrir-demo").forEach((b) => b.addEventListener("click", (e) => {
+  document.querySelectorAll(".ouvrir-devis").forEach((b) => b.addEventListener("click", (e) => {
     if (!CLE_WEB3FORMS || !fenetre.showModal) return;   // pas de formulaire : le lien descend aux coordonnées
     e.preventDefault();
     messageEnvoi.textContent = ""; messageEnvoi.className = "message-envoi";
@@ -370,7 +378,7 @@
     delete donnees.botcheck;
     Object.assign(donnees, {
       access_key: CLE_WEB3FORMS,
-      subject: `Demande de démonstration : ${donnees.Entreprise || donnees.Nom}`,
+      subject: `Demande de devis : ${donnees.Entreprise || donnees.Nom}`,
       from_name: "Site GestionPro",
     });
     $("#envoyer-demo").disabled = true;
@@ -386,7 +394,7 @@
       if (!r.ok || !rep.success) throw new Error(rep.message || "envoi impossible");
       formDemo.reset();
       messageEnvoi.className = "message-envoi ok";
-      messageEnvoi.textContent = "Merci, votre demande est bien envoyée : je vous rappelle rapidement.";
+      messageEnvoi.textContent = "Merci, votre demande est bien envoyée : je vous réponds rapidement avec un devis.";
     } catch (err) {
       messageEnvoi.className = "message-envoi erreur";
       messageEnvoi.innerHTML = `L'envoi n'a pas fonctionné. Vous pouvez m'appeler au ${TELEPHONE} ou écrire à `

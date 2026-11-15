@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta name="robots" content="noindex">
+  <script src="demo.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Agenda · GestionPro</title>
+  <link rel="icon" href="icone.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="app">
+<main class="contenu large">
+  <header class="entete-page">
+    <div><h1>Agenda</h1><p id="periode"></p></div>
+    <div class="actions">
+      <button type="button" class="bouton secondaire" id="precedente" title="Semaine précédente">‹</button>
+      <button type="button" class="bouton secondaire" id="aujourdhui">Aujourd'hui</button>
+      <button type="button" class="bouton secondaire" id="suivante" title="Semaine suivante">›</button>
+      <button type="button" class="bouton" id="nouveau-rdv">Nouveau rendez-vous</button>
+    </div>
+  </header>
+
+  <p class="encart erreur" id="retards" hidden></p>
+
+  <div class="defile">
+    <div class="calendrier" id="calendrier"></div>
+  </div>
+  <p class="aide" style="margin-top: 10px">Cliquez sur un créneau libre pour ajouter un rendez-vous.
+    Les tâches du haut sont les échéances de vos factures : cochez-les quand elles sont réglées.</p>
+</main>
+
+<!-- Rendez-vous -->
+<dialog id="fenetre" class="petite">
+  <form class="fenetre" id="form-rdv" novalidate>
+    <div class="fenetre-entete">
+      <h2 id="titre-fenetre">Nouveau rendez-vous</h2>
+      <button type="button" class="fermer" data-fermer title="Fermer">×</button>
+    </div>
+    <div class="fenetre-corps">
+      <div class="champs">
+        <label class="champ c6"><span>Titre</span><input name="titre" required placeholder="Rendez-vous client, livraison, réunion…"></label>
+        <label class="champ c2"><span>Date</span><input name="date" type="date" required></label>
+        <label class="champ c2"><span>Début</span><input name="debut" type="time" step="900" required></label>
+        <label class="champ c2"><span>Fin</span><input name="fin" type="time" step="900" required></label>
+        <label class="champ c6"><span>Contact <em>(facultatif)</em></span><select name="contact_id"></select></label>
+        <label class="champ c6"><span>Lieu</span><input name="lieu"></label>
+        <label class="champ c6"><span>Notes</span><textarea name="notes" rows="2"></textarea></label>
+      </div>
+    </div>
+    <div class="fenetre-pied">
+      <button type="button" class="bouton danger" id="supprimer">Supprimer</button>
+      <span class="espace"></span>
+      <span class="message erreur" id="erreur"></span>
+      <button type="button" class="bouton secondaire" data-fermer>Annuler</button>
+      <button class="bouton">Enregistrer</button>
+    </div>
+  </form>
+</dialog>
+
+<script src="commun.js"></script>
+<script src="agenda.js"></script>
+</body>
+</html>

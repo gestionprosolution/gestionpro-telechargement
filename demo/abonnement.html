@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta name="robots" content="noindex">
+  <script src="demo.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Abonnement · GestionPro</title>
+  <link rel="icon" href="icone.png">
+  
+  <meta name="theme-color" content="#1f4e79">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="barre">
+  <a class="marque" href="index.html"><img src="icone.png" alt=""><span>GestionPro</span></a>
+</header>
+
+<main class="page-abonnement">
+  <section class="carte offre">
+    <p class="etat" id="etat"></p>
+    <h1>GestionPro</h1>
+    <p class="prix" id="prix"></p>
+    <ul class="avantages">
+      <li>Devis PDF illimités, à votre logo</li>
+      <li>Suivi de toutes vos factures fournisseurs et clients</li>
+      <li>Export pour votre comptable</li>
+      <li>Accessible sur ordinateur, tablette et téléphone</li>
+      <li>Sans engagement : résiliable à tout moment</li>
+    </ul>
+
+    <button class="bouton principal" id="abonner" hidden>S'abonner</button>
+    <button class="bouton principal secondaire" id="gerer" hidden>Gérer mon abonnement et mes factures</button>
+    <a class="bouton principal" id="continuer" href="index.html" hidden>Accéder à mes outils</a>
+    <p class="erreur" id="erreur" hidden></p>
+    <p class="aide paiement-securise">Paiement sécurisé par Stripe. Vos coordonnées bancaires ne transitent jamais par nos serveurs.</p>
+  </section>
+
+  <p class="liens-bas">
+    <a class="lien" href="/api/auth/export">Exporter mes données</a> ·
+    <button type="button" class="lien" id="deconnexion-bas">Se déconnecter</button>
+  </p>
+</main>
+
+<script src="commun.js"></script>
+<script src="abonnement.js"></script>
+</body>
+</html>

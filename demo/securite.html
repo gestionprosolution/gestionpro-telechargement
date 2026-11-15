@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta name="robots" content="noindex">
+  <script src="demo.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Données et sécurité · GestionPro</title>
+  <link rel="icon" href="icone.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="app">
+<main class="contenu etroit texte-long">
+  <header class="entete-page">
+    <div><h1>Données et sécurité</h1>
+      <p>Ce que GestionPro fait de vos données, comment les protéger, et vos obligations.</p></div>
+  </header>
+
+  <section class="carte">
+    <h2>Vos données restent sur cet ordinateur</h2>
+    <ul>
+      <li>Devis, factures, clients, fournisseurs, agenda, stock et photos sont enregistrés <strong>uniquement sur cet
+        ordinateur</strong>, dans le dossier <code id="dossier-donnees">…</code>. Ils ne sont envoyés ni à l'éditeur du
+        logiciel, ni à un serveur sur Internet.</li>
+      <li>Le logiciel fonctionne <strong>sans connexion Internet</strong>. Par défaut, il ne fonctionne que sur cet
+        ordinateur. Si vous en faites le <strong>poste principal du bureau</strong> (Paramètres > Réseau du bureau),
+        seuls les ordinateurs de votre réseau local peuvent s'y connecter, chacun avec son profil et son mot de passe :
+        rien ne passe par Internet.</li>
+      <li>Quand Internet est disponible, le logiciel regarde s'il existe une <strong>nouvelle version</strong> (liste
+        publique des versions sur github.com) : rien n'est envoyé, et la mise à jour ne s'installe que si vous
+        l'acceptez.</li>
+      <li>Ce qui sort de l'ordinateur, c'est <strong>uniquement ce que vous décidez d'envoyer</strong> : les e-mails
+        (devis, factures, relances) partent de votre propre messagerie, les factures électroniques sont déposées par vous
+        sur votre plateforme agréée, et un rapport « Signaler un problème » n'est transmis que si vous l'envoyez (il ne
+        contient aucun nom ni montant).</li>
+      <li>L'éditeur n'a <strong>aucun accès</strong> à vos données, même pour vous aider : en cas de besoin, c'est vous qui
+        choisissez ce que vous lui montrez.</li>
+    </ul>
+  </section>
+
+  <section class="carte">
+    <h2>Protéger vos données</h2>
+    <ul>
+      <li><strong>Sauvegardes</strong> : une sauvegarde est faite automatiquement chaque jour dans
+        <code id="dossier-sauvegardes">…</code> (les 15 dernières sont gardées). Si l'ordinateur tombe en panne ou est volé,
+        ce dossier disparaît avec lui : activez la <strong>copie hors de l'ordinateur</strong> (clé USB, OneDrive, Google
+        Drive) dans <a href="parametres.html#sauvegardes">Paramètres &gt; Sauvegardes</a>.</li>
+      <li><strong>Mot de passe</strong> (facultatif, <a href="parametres.html#securite">Paramètres</a>) : il est demandé à
+        chaque ouverture du logiciel. Il est conservé sous une forme chiffrée irréversible. Notez votre <strong>code de
+        secours</strong> : sans lui, un mot de passe oublié ne peut pas être récupéré.</li>
+      <li><strong>Limite à connaître</strong> : le mot de passe protège l'ouverture du logiciel, mais les fichiers de
+        données ne sont pas chiffrés. Protégez aussi votre <strong>session Windows (ou Mac)</strong> par un mot de passe et, si
+        possible, activez le chiffrement du disque (BitLocker). Rangez les clés USB de sauvegarde en lieu sûr.</li>
+      <li>Gardez Windows (ou macOS) et votre antivirus à jour, et ne donnez pas accès à votre session à des personnes de passage.</li>
+    </ul>
+  </section>
+
+  <section class="carte">
+    <h2>Vos obligations</h2>
+    <h3>Données personnelles de vos clients (RGPD)</h3>
+    <ul>
+      <li>Vous êtes <strong>responsable</strong> des informations que vous enregistrez sur vos clients (nom, adresse,
+        téléphone, e-mail, photos). Ne collectez que ce qui est utile à vos devis, factures et rendez-vous.</li>
+      <li>Un client peut vous demander de <strong>consulter, corriger ou supprimer</strong> ses informations : sa fiche
+        est dans Contacts (avec l'historique de ses devis et factures). Les factures, elles, doivent être conservées
+        (voir ci-dessous) même si le client demande leur suppression.</li>
+      <li>Supprimez les contacts et devis devenus inutiles (par exemple un prospect sans suite depuis 3 ans).</li>
+    </ul>
+    <h3>Factures</h3>
+    <ul>
+      <li>Les factures doivent être <strong>conservées 10 ans</strong> (Code de commerce) : ne les supprimez pas et
+        gardez vos sauvegardes. Une facture émise ne se modifie pas : une erreur se corrige par un avoir.</li>
+      <li>Vous restez responsable de l'exactitude de vos factures (taux de TVA, mentions). Renseignez vos informations
+        légales dans <a href="parametres.html">Paramètres</a> : elles s'impriment sur chaque document.</li>
+      <li><strong>Facture électronique</strong> : depuis septembre 2026, vous devez disposer d'une plateforme agréée pour
+        recevoir vos factures ; à partir de septembre 2027, vous y déposerez vos factures aux professionnels et y
+        déclarerez vos ventes aux particuliers. GestionPro prépare ces éléments
+        (<a href="plateforme.html">Facture électronique</a>), le dépôt reste à faire sur votre plateforme.</li>
+    </ul>
+  </section>
+
+  <section class="carte" id="encaissements" hidden>
+    <h2>Encaissements : journal sécurisé</h2>
+    <p class="aide" style="margin-bottom: 12px">Si vous encaissez des clients particuliers, la loi impose un logiciel
+      qui garantit l'inaltérabilité, la sécurisation, la conservation et l'archivage de ces règlements (article 286,
+      I-3° bis du Code général des impôts). GestionPro tient pour cela un journal de tous les règlements de vos factures
+      clients : rien n'y est jamais modifié ni effacé (une correction ajoute une écriture d'annulation), chaque jour,
+      mois et année est clôturé avec ses totaux, et chaque année close est archivée.</p>
+    <div class="resume trois" style="margin-bottom: 12px">
+      <div><span>État du journal</span><strong id="enc-integre">…</strong><small id="enc-verif"></small></div>
+      <div><span>Écritures</span><strong id="enc-ecritures">…</strong><small id="enc-service"></small></div>
+      <div><span>Total perpétuel</span><strong id="enc-total">…</strong><small id="enc-cloture"></small></div>
+    </div>
+    <p class="message erreur" id="enc-anomalies" hidden></p>
+    <div class="actions" style="flex-wrap: wrap; gap: 8px; align-items: end">
+      <button type="button" class="bouton secondaire" id="enc-verifier">Vérifier maintenant</button>
+      <label class="champ" style="max-width: 160px"><span>Du</span><input type="date" id="enc-debut"></label>
+      <label class="champ" style="max-width: 160px"><span>Au</span><input type="date" id="enc-fin"></label>
+      <a class="bouton secondaire" id="enc-exporter" href="#">Exporter pour un contrôle</a>
+    </div>
+    <p class="aide" id="enc-archives" style="margin-top: 10px"></p>
+    <h3 style="margin-top: 18px">Attestation de conformité de l'éditeur</h3>
+    <p id="enc-attestation" class="aide"></p>
+    <div class="actions" style="margin-top: 8px">
+      <a class="bouton" id="enc-attestation-ouvrir" href="/api/encaissements/attestation.pdf" target="_blank" hidden>Consulter l'attestation</a>
+    </div>
+  </section>
+
+  <section class="carte">
+    <h2>Logiciel et licence</h2>
+    <ul>
+      <li>GestionPro <span id="version"></span>. Licence d'utilisation accordée à l'entreprise titulaire de la clé de
+        licence, pour son propre usage, sur ses ordinateurs.</li>
+      <li id="ligne-contact" hidden>Contact de l'éditeur : <a id="contact"></a>. Pour un problème, utilisez « Signaler un
+        problème » en bas du menu.</li>
+      <li>Le logiciel est fourni pour aider à la gestion de votre entreprise ; il ne remplace pas les conseils de votre
+        expert-comptable pour vos obligations fiscales et comptables.</li>
+    </ul>
+    <details class="plus" style="margin-top: 12px">
+      <summary>Composants libres utilisés</summary>
+      <p class="aide" style="margin-top: 8px">GestionPro utilise les logiciels libres suivants, dont nous remercions les
+        auteurs. Leurs licences autorisent cet usage et demandent de les citer :</p>
+      <table class="tableau compact" style="margin-top: 8px"><tbody>
+        <tr><td>Python</td><td>Python Software Foundation License</td></tr>
+        <tr><td>FastAPI, Pydantic</td><td>MIT</td></tr>
+        <tr><td>Uvicorn, Starlette</td><td>BSD 3 clauses</td></tr>
+        <tr><td>python-multipart</td><td>Apache 2.0</td></tr>
+        <tr><td>ReportLab (création des PDF)</td><td>BSD</td></tr>
+        <tr><td>Polices Bitstream Vera</td><td>Bitstream Vera Fonts License</td></tr>
+        <tr><td>Pillow (images)</td><td>MIT-CMU</td></tr>
+        <tr><td>pypdf</td><td>BSD 3 clauses</td></tr>
+        <tr><td>lxml</td><td>BSD 3 clauses</td></tr>
+        <tr><td>factur-x (Akretion, facture électronique)</td><td>BSD</td></tr>
+        <tr><td>python-stdnum</td><td>LGPL 2.1 ou ultérieure</td></tr>
+        <tr><td>iso4217</td><td>Domaine public</td></tr>
+      </tbody></table>
+    </details>
+  </section>
+</main>
+
+<script src="commun.js"></script>
+<script>
+  async function chargerEncaissements() {
+    const e = await apiJson("/api/encaissements");
+    $("#encaissements").hidden = false;
+    $("#enc-integre").textContent = e.integre ? "Intègre" : "Anomalie";
+    $("#enc-integre").style.color = e.integre ? "var(--ok)" : "var(--erreur)";
+    $("#enc-verif").textContent = e.derniere_verification
+      ? `vérifié le ${dateFr(e.derniere_verification.horodatage.slice(0, 10))}` : "contrôlé à l'ouverture de cette page";
+    $("#enc-ecritures").textContent = e.ecritures;
+    $("#enc-service").textContent = `depuis le ${dateFr(e.mise_en_service.slice(0, 10))}`;
+    $("#enc-total").textContent = euros(e.total_perpetuel);
+    $("#enc-cloture").textContent = e.derniere_cloture
+      ? `dernière clôture : ${e.derniere_cloture.periode}` : "première clôture demain";
+    $("#enc-anomalies").hidden = e.integre;
+    $("#enc-anomalies").textContent = e.integre ? "" : "Anomalies détectées : " + e.anomalies.join(" · ")
+      + ". Contactez l'éditeur (« Signaler un problème »).";
+    $("#enc-archives").textContent = e.archives.length
+      ? `Archives annuelles : ${e.archives.join(", ")} (dans le dossier des données, comprises dans les sauvegardes).`
+      : "La première archive annuelle sera produite à la fin de l'année en cours.";
+    afficherAttestation(e.attestation);
+  }
+
+  function afficherAttestation(a) {
+    $("#enc-attestation-ouvrir").hidden = !a.disponible;
+    $("#enc-attestation").innerHTML = a.disponible
+      ? `Attestation de l'éditeur pour GestionPro ${echapper(a.version)}, au nom de ${echapper(a.entreprise)}.
+        Imprimez-la ou enregistrez-la, <strong>complétez et signez le volet 2</strong>, puis conservez-la : elle est à
+        présenter en cas de contrôle. Une nouvelle vous sera proposée à chaque nouvelle version majeure.`
+      : a.manque === "entreprise"
+        ? "Renseignez le nom de votre entreprise dans Paramètres : l'attestation est établie à son nom."
+        : "Elle est fournie avec votre licence : elle apparaîtra ici dès qu'une licence à votre nom sera activée.";
+  }
+
+  $("#enc-verifier").addEventListener("click", async (e) => {
+    e.target.disabled = true;
+    try {
+      const v = await envoyerJson("/api/encaissements/verifier", "POST", {});
+      await chargerEncaissements();
+      alert(v.integre ? "Le journal des encaissements et ses archives sont intègres." : "Anomalies : " + v.anomalies.join("\n"));
+    } finally {
+      e.target.disabled = false;
+    }
+  });
+  $("#enc-debut").value = `${new Date().getFullYear()}-01-01`;
+  $("#enc-fin").value = aujourdhui();
+  $("#enc-exporter").addEventListener("click", (e) => {
+    e.preventDefault();
+    location.href = `/api/encaissements/export.zip?debut=${$("#enc-debut").value}&fin=${$("#enc-fin").value}`;
+  });
+
+  (async () => {
+    await initialiserPage();
+    if (session.mode === "local" && estAdmin()) chargerEncaissements().catch(() => {});
+    try {
+      const i = await apiJson("/api/support/infos");
+      $("#dossier-donnees").textContent = i.dossier_donnees;
+      $("#dossier-sauvegardes").textContent = i.dossier_sauvegardes;
+      $("#version").textContent = `version ${i.version}`;
+      if (i.email) {
+        $("#ligne-contact").hidden = false;
+        $("#contact").textContent = i.email;
+        $("#contact").href = `mailto:${i.email}`;
+      }
+    } catch {}
+  })();
+</script>
+</body>
+</html>
