@@ -486,6 +486,8 @@ function construireMenu() {
       <div class="initiale">${echapper((entreprise.nom || "?").trim().charAt(0).toUpperCase())}</div>
       <span>${echapper(entreprise.nom || "Mon entreprise")}</span>
     </div>
+    <button type="button" class="menu-bouton" aria-expanded="false" title="Afficher le menu">
+      <span class="menu-bouton-icone" aria-hidden="true"></span><span>Menu</span></button>
     <div class="menu-recherche">
       <input type="search" id="recherche-globale" placeholder="Rechercher…" autocomplete="off"
         title="Rechercher partout (Ctrl+K)">
@@ -504,6 +506,13 @@ function construireMenu() {
     </div>`;
   document.body.prepend(menu);
   brancherGroupesMenu(menu);
+  // Petit écran (téléphone) : menu replié derrière le bouton « Menu »
+  const bouton = $(".menu-bouton", menu);
+  bouton.addEventListener("click", () => {
+    const deplie = menu.classList.toggle("deplie");
+    bouton.setAttribute("aria-expanded", String(deplie));
+    bouton.lastElementChild.textContent = deplie ? "Fermer" : "Menu";
+  });
 
   // Logo de l'entreprise s'il existe, sinon son initiale
   const logo = $(".menu-entreprise img");

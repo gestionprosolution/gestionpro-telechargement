@@ -3,7 +3,7 @@
 // (outils_vendeur/demo_web.py), bloque toute modification et fige la date de la démonstration.
 "use strict";
 (() => {
-  const MAINTENANT = 1794837317937;                       // date des données enregistrées (ms)
+  const MAINTENANT = 1794837998628;                       // date des données enregistrées (ms)
   const TELECHARGER = "../index.html#telecharger";
 
   // --- Date figée : l'agenda, les retards et les échéances restent cohérents avec les données ------------
@@ -216,7 +216,9 @@
     #demo-bandeau .demo-pastille { background: #f2b33d; color: #14324f; border-radius: 999px; padding: 2px 9px;
       font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
     body.app .contenu { padding-bottom: 90px; }   /* le bas des pages reste visible au-dessus du bandeau */
-    @media (max-width: 640px) { #demo-bandeau .demo-texte { display: none; } }
+    @media (max-width: 640px) { #demo-bandeau .demo-texte { display: none; }
+      #demo-bandeau { left: auto; right: 10px; bottom: 10px; transform: none; gap: 8px; padding: 5px 5px 5px 10px; font-size: 13px; }
+      #demo-bandeau a { padding: 6px 11px; } }
     #demo-fenetre { border: 0; border-radius: 14px; padding: 0; max-width: min(480px, calc(100vw - 32px));
       box-shadow: 0 20px 60px rgba(0,0,0,.3); }
     #demo-fenetre::backdrop { background: rgba(10, 25, 40, .45); }

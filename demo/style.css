@@ -726,3 +726,25 @@ details.plus[open] summary { margin-bottom: 14px; }
 /* Paramètres : une seule partie à la fois (onglets) */
 .hors-onglet { display: none !important; }
 #onglets-parametres { margin-bottom: 18px; }
+
+/* --- Téléphone et fenêtre étroite : menu replié derrière un bouton ------------------------------ */
+.menu-bouton { display: none; }
+@media (max-width: 860px) {
+  .menu { position: sticky; top: 0; z-index: 40; flex-wrap: wrap; gap: 8px 4px; box-shadow: 0 1px 0 var(--bord); }
+  .menu-entreprise { flex: 1 1 auto; min-width: 0; }
+  .menu-bouton { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border: 1px solid var(--bord);
+                 border-radius: 9px; background: var(--surface); font: inherit; font-weight: 600; color: var(--texte); cursor: pointer; }
+  .menu-bouton-icone, .menu-bouton-icone::before, .menu-bouton-icone::after {
+    display: block; width: 16px; height: 2px; background: currentColor; border-radius: 1px; position: relative; content: ""; }
+  .menu-bouton-icone::before { position: absolute; top: -5px; } .menu-bouton-icone::after { position: absolute; top: 5px; }
+  .menu:not(.deplie) .menu-recherche, .menu:not(.deplie) .menu-liens, .menu:not(.deplie) .menu-bas { display: none; }
+  .menu.deplie { max-height: var(--hauteur-ecran); overflow-y: auto; }
+  .menu.deplie .menu-recherche { order: 0; flex: 1 1 100%; padding: 4px 0 0; }
+  .menu.deplie .menu-liens { flex: 1 1 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 0 6px; overflow: visible; }
+  .menu.deplie .menu-groupe { grid-column: 1 / -1; }
+  .menu.deplie .menu-sous { display: grid; grid-template-columns: 1fr 1fr; gap: 0 6px; }
+  .menu.deplie .menu-titre { display: block; }
+  .menu.deplie .menu-bas { flex: 1 1 100%; margin: 6px 0 0; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 6px 14px; }
+  .onglets, .sous-onglets { overflow-x: auto; gap: 18px; scrollbar-width: none; }
+  .onglets button, .sous-onglets button { white-space: nowrap; flex: none; }
+}
