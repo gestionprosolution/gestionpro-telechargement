@@ -493,5 +493,58 @@ $("#chercher-maj").addEventListener("click", async () => {
         : a.en_essai ? `Essai gratuit jusqu'au ${dateFr(a.essai_fin)}` : "Aucun abonnement";
     }
   }
-  if (location.hash) document.querySelector(location.hash)?.scrollIntoView();
+  brancherOnglets();
 })();
+
+// --- Onglets : une partie des réglages à la fois -----------------------------------------------
+// Un onglet n'apparaît que si l'une de ses sections est ouverte à ce profil (sections « hidden » sinon).
+const ONGLETS = [
+  { cle: "entreprise", titre: "Entreprise", sections: ["entreprise"] },
+  { cle: "messages", titre: "Messages", sections: ["messages"] },
+  { cle: "licence", titre: "Licence et abonnement", sections: ["licence", "compte"] },
+  { cle: "sauvegardes", titre: "Sauvegardes", sections: ["sauvegardes"] },
+  { cle: "utilisateurs", titre: "Utilisateurs et réseau", sections: ["mon-profil", "utilisateurs", "reseau"] },
+];
+
+function brancherOnglets() {
+  const barre = document.createElement("nav");
+  barre.className = "onglets";
+  barre.id = "onglets-parametres";
+  barre.innerHTML = ONGLETS.map((o) => `<button type="button" data-onglet="${o.cle}">${o.titre}</button>`).join("");
+  $(".entete-page").after(barre);
+  const ouverte = (id) => { const s = document.getElementById(id); return s && !s.hidden; };
+  const disponibles = () => ONGLETS.filter((o) => o.sections.some(ouverte));
+  let actif = null;
+
+  function afficher(cle, memoriser = true) {
+    const liste = disponibles();
+    const onglet = liste.find((o) => o.cle === cle) || liste[0];
+    if (!onglet) return;
+    actif = onglet.cle;
+    for (const o of ONGLETS) {
+      for (const id of o.sections) document.getElementById(id)?.classList.toggle("hors-onglet", o !== onglet);
+    }
+    $$("button", barre).forEach((b) => {
+      b.hidden = !liste.some((o) => o.cle === b.dataset.onglet);
+      b.classList.toggle("actif", b.dataset.onglet === actif);
+    });
+    barre.hidden = liste.length < 2;
+    if (memoriser) history.replaceState(null, "", `#${actif}`);
+  }
+
+  barre.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-onglet]");
+    if (b) afficher(b.dataset.onglet);
+  });
+  // Adresse « parametres.html#reseau » (ou #licence…) : l'onglet qui contient cette section
+  const ancre = location.hash.slice(1);
+  const depart = ONGLETS.find((o) => o.cle === ancre || o.sections.includes(ancre));
+  afficher(depart?.cle || "entreprise", false);
+  if (ancre && depart && depart.cle !== ancre) document.getElementById(ancre)?.scrollIntoView();
+  // Sections montrées plus tard (chargements) : la barre suit
+  const suivi = new MutationObserver(() => afficher(actif, false));
+  for (const o of ONGLETS) for (const id of o.sections) {
+    const s = document.getElementById(id);
+    if (s) suivi.observe(s, { attributes: true, attributeFilter: ["hidden"] });
+  }
+}

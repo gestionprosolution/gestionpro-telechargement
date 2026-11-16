@@ -722,3 +722,7 @@ details.plus[open] summary { margin-bottom: 14px; }
 .plateformes-liste .option { display: flex; align-items: center; justify-content: space-between; gap: 10px;
   padding: 10px 12px; border: 1px solid var(--bord); border-radius: 8px; font-size: 14px; }
 .plateformes-liste .option.bientot { opacity: .6; }
+
+/* Paramètres : une seule partie à la fois (onglets) */
+.hors-onglet { display: none !important; }
+#onglets-parametres { margin-bottom: 18px; }
