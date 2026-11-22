@@ -33,8 +33,24 @@
     </div>
     <div class="signature-reglage">
       <h3>Signature des e-mails</h3>
-      <p class="aide">Ajoutée à la fin des messages proposés (la variable {signature} dans vos textes). Cochez ce
-        que vous voulez faire apparaître.</p>
+      <p class="aide">Ajoutée à la fin des messages proposés (la variable {signature} dans vos textes).</p>
+      <div class="choix-signature" id="mode-signature">
+        <label><input type="radio" name="mode-signature" value="texte"> Composer la signature ici (texte)</label>
+        <label><input type="radio" name="mode-signature" value="messagerie"> Utiliser la signature de ma messagerie
+          (image, logo…)</label>
+      </div>
+      <div class="encart aide" id="aide-signature-messagerie" hidden style="margin-top: 10px">
+        Les messages s'ouvrent dans votre messagerie par un lien, qui ne peut contenir que du texte : la signature en
+        image se règle donc une fois dans la messagerie, qui l'ajoute toute seule à chaque nouveau message.
+        <ul style="margin: 6px 0 0">
+          <li><strong>Gmail</strong> : roue dentée &gt; Voir tous les paramètres &gt; Général &gt; Signature : créez-la
+            (bouton « Insérer une image »), puis choisissez-la pour les « nouveaux e-mails ».</li>
+          <li><strong>Outlook</strong> : Paramètres &gt; Courrier &gt; Composer et répondre &gt; Signature électronique,
+            et cochez « Inclure automatiquement ma signature dans les nouveaux messages ».</li>
+        </ul>
+        GestionPro n'ajoute alors pas de signature dans le texte (pour ne pas la doubler).
+      </div>
+      <div id="signature-texte">
       <div class="champs" style="margin-top: 10px">
         <label class="champ c3"><span>Votre prénom et nom <em>(facultatif)</em></span>
           <input id="signataire" placeholder="ex. Marie Dupont"></label>
@@ -46,8 +62,9 @@
         <label><input type="checkbox" value="email"> E-mail</label>
         <label><input type="checkbox" value="adresse"> Adresse</label>
       </div>
+      </div>
       <div class="actions" style="margin-top: 10px; align-items: flex-start">
-        <div><span class="aide">Aperçu :</span><pre class="apercu-signature" id="apercu-signature"></pre></div>
+        <div id="bloc-apercu-signature"><span class="aide">Aperçu :</span><pre class="apercu-signature" id="apercu-signature"></pre></div>
         <span class="espace"></span>
         <span class="message" id="message-signature"></span>
         <button type="button" class="bouton secondaire petit" id="enregistrer-signature">Enregistrer la signature</button>

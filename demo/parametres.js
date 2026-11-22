@@ -191,7 +191,19 @@ function apercuSignature() {
   $("#apercu-signature").textContent = lignes.length ? lignes.join("\n") : "(aucune signature)";
 }
 
+function modeSignature() {
+  return $("#mode-signature input:checked")?.value || "texte";
+}
+
+function afficherModeSignature() {
+  const messagerie = modeSignature() === "messagerie";
+  $("#signature-texte").hidden = $("#bloc-apercu-signature").hidden = messagerie;
+  $("#aide-signature-messagerie").hidden = !messagerie;
+}
+
 function chargerSignature() {
+  $$("#mode-signature input").forEach((r) => (r.checked = r.value === (entreprise.signature_mode || "texte")));
+  afficherModeSignature();
   $("#signataire").value = entreprise.signataire || "";
   const choisis = entreprise.signature_elements || ["entreprise", "telephone", "email"];
   $$("#cases-signature input").forEach((c) => (c.checked = choisis.includes(c.value)));
@@ -199,6 +211,7 @@ function chargerSignature() {
 }
 
 $("#cases-signature").addEventListener("change", apercuSignature);
+$("#mode-signature").addEventListener("change", afficherModeSignature);
 $("#signataire").addEventListener("input", () => {
   const caseNom = $("#cases-signature input[value=signataire]");
   if ($("#signataire").value.trim() && !caseNom.dataset.touche) caseNom.checked = true;   // nom saisi : affiché
@@ -209,7 +222,8 @@ $("#enregistrer-signature").addEventListener("click", async () => {
   const message = $("#message-signature");
   try {
     entreprise = await envoyerJson("/api/entreprise", "PUT", { ...(await apiJson("/api/entreprise")),
-      signataire: $("#signataire").value.trim(), signature_elements: elementsSignature() });
+      signataire: $("#signataire").value.trim(), signature_elements: elementsSignature(),
+      signature_mode: modeSignature() });
     message.className = "message ok";
     message.textContent = "Signature enregistrée.";
   } catch (err) {

@@ -13,7 +13,12 @@
 <main class="contenu">
   <header class="entete-page">
     <div><h1>Contacts</h1><p>Vos clients et fournisseurs. Ceux de vos devis et factures sont ajoutés automatiquement.</p></div>
-    <button type="button" class="bouton" id="nouveau-contact">Nouveau contact</button>
+    <span class="actions">
+      <button type="button" class="bouton secondaire" id="copier-newsletter"
+        title="Les e-mails des clients qui acceptent la newsletter et le catalogue, à coller dans votre messagerie">
+        Copier les e-mails (newsletter)</button>
+      <button type="button" class="bouton" id="nouveau-contact">Nouveau contact</button>
+    </span>
   </header>
 
   <section class="carte">
@@ -55,6 +60,16 @@
           <label class="champ"><span>N° de TVA intracommunautaire</span><input name="tva_intracom"></label>
           <label class="champ c6 case"><input name="professionnel" type="checkbox"> Client professionnel (entreprise) :
             ses factures sont à déposer sur la plateforme de facture électronique</label>
+          <fieldset class="champ c6 consentements">
+            <legend>Consentements (RGPD)</legend>
+            <label class="case"><input name="consent_donnees" type="checkbox"> Accepte l'enregistrement de ses
+              données pour traiter ses commandes</label>
+            <label class="case"><input name="consent_transmission" type="checkbox"> Accepte la transmission de ses
+              données à nos partenaires (transporteur, diffuseur…)</label>
+            <label class="case"><input name="consent_communications" type="checkbox"> Accepte de recevoir la
+              newsletter, le catalogue et nos informations</label>
+            <span class="aide" id="date-consentements"></span>
+          </fieldset>
           <label class="champ c6"><span>Notes</span><textarea name="notes" rows="3"></textarea></label>
         </div>
       </div>

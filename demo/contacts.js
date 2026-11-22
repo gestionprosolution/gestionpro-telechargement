@@ -113,6 +113,8 @@ function ouvrir(contact = null) {
     else champ.value = valeurs[champ.name] ?? "";
   }
   $("#titre-fiche").textContent = contact ? contact.nom : "Nouveau contact";
+  $("#date-consentements").textContent = contact?.consentements_le
+    ? `Consentements notés ou modifiés le ${dateFr(contact.consentements_le)}.` : "";
   $("#supprimer").hidden = !contact;
   $("#photos-contact").hidden = !contact;
   $("#activite").hidden = !contact;
@@ -152,6 +154,20 @@ $("#supprimer").addEventListener("click", async () => {
 
 $$("[data-fermer]").forEach((b) => b.addEventListener("click", () => $("#fenetre").close()));
 $("#nouveau-contact").addEventListener("click", () => ouvrir());
+
+// Clients qui acceptent la newsletter / le catalogue (RGPD) : leurs e-mails, à coller en copie cachée
+$("#copier-newsletter").addEventListener("click", async () => {
+  const emails = [...new Set((await apiJson("/api/contacts"))
+    .filter((c) => c.type === "client" && c.consent_communications && c.email).map((c) => c.email.trim()))];
+  if (!emails.length) return alert("Aucun client n'a encore accepté la newsletter (case dans sa fiche).");
+  try {
+    await navigator.clipboard.writeText(emails.join("; "));
+    alert(`${pluriel(emails.length, "adresse")} copiée${emails.length > 1 ? "s" : ""}. Collez-les dans le champ « Cci » `
+      + "(copie cachée) de votre messagerie, pour que chacun ne voie pas les adresses des autres.");
+  } catch {
+    prompt("Copiez ces adresses (Ctrl+C) :", emails.join("; "));
+  }
+});
 $("#photos-contact").addEventListener("click", () => {
   const contact = contactEdite;
   $("#fenetre").close();

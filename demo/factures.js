@@ -442,6 +442,8 @@ function afficherApercu(source, nom) {
   }
   zone.innerHTML = nom.toLowerCase().endsWith(".pdf")
     ? `<iframe src="${source}#navpanes=0&view=FitH" title="Aperçu"></iframe>`
+    : nom.toLowerCase().endsWith(".xml")   // facture électronique sans PDF : mise en page par le serveur
+    ? `<iframe src="${source}" title="Aperçu"></iframe>`
     : `<img src="${source}" alt="Aperçu">`;
   $("#nom-piece").textContent = nom;
 }
