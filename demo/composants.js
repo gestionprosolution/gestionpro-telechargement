@@ -76,6 +76,8 @@ const GABARIT_ENTREPRISE = `
         <option value="office365">Outlook professionnel (Microsoft 365)</option>
         <option value="app">Logiciel de messagerie installé (Outlook, Thunderbird, Courrier…)</option>
       </select></label>
+    <label class="champ c2"><span>Adresse Gmail d'envoi <em>(si plusieurs comptes Gmail ; vide : celui par défaut)</em></span>
+      <input name="compte_gmail" type="email" placeholder="contact@mon-entreprise.fr"></label>
   </div>`;
 
 function monterFormulaireEntreprise(conteneur) {
@@ -129,7 +131,9 @@ function monterFormulaireEntreprise(conteneur) {
         donnees[c.name] = c.type === "checkbox" ? c.checked
           : c.type === "number" ? Number(c.value || 0) : c.value.trim();
       });
-      return envoyerJson("/api/entreprise", "PUT", donnees);
+      // Les réglages saisis ailleurs (signature des e-mails…) sont conservés
+      const actuelle = await apiJson("/api/entreprise").catch(() => ({}));
+      return envoyerJson("/api/entreprise", "PUT", { ...actuelle, ...donnees });
     },
   };
 }

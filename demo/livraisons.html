@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta name="robots" content="noindex">
+  <script src="demo.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bons de livraison · GestionPro</title>
+  <link rel="icon" href="icone.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="app">
+<main class="contenu">
+  <header class="entete-page">
+    <div><h1>Bons de livraison</h1>
+      <p>Le document remis au client avec la marchandise : ce qui est livré, sans les prix.</p></div>
+    <button type="button" class="bouton" id="nouveau-bl">Nouveau bon de livraison</button>
+  </header>
+
+  <section class="carte">
+    <div class="barre-outils">
+      <input type="search" id="recherche-bl" placeholder="Rechercher un client, un numéro, un article">
+    </div>
+    <div class="defile">
+      <table class="tableau" id="table-bl">
+        <thead><tr><th>N°</th><th>Date de livraison</th><th>Client</th><th>Devis</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <p class="vide" id="vide-bl" hidden></p>
+  </section>
+</main>
+
+<!-- Choix de départ : depuis un devis accepté, ou vierge -->
+<dialog id="fenetre-depart" class="petite">
+  <div class="fenetre">
+    <div class="fenetre-entete"><h2>Nouveau bon de livraison</h2>
+      <button type="button" class="fermer" data-fermer title="Fermer">×</button></div>
+    <div class="fenetre-corps" style="grid-template-columns: 1fr"><div>
+      <label class="champ"><span>À partir d'un devis accepté <em>(client et lignes repris)</em></span>
+        <select id="choix-devis"><option value="">Choisir un devis…</option></select></label>
+      <p class="aide" style="margin-top: 10px">Ou partez d'un bon vierge.</p>
+    </div></div>
+    <div class="fenetre-pied">
+      <button type="button" class="bouton secondaire" id="bl-vierge">Bon vierge</button>
+      <span class="espace"></span>
+      <button type="button" class="bouton" id="bl-depuis-devis">Continuer</button>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="fenetre-bl" style="width: min(900px, 96vw)">
+  <form class="fenetre" id="form-bl" novalidate>
+    <div class="fenetre-entete">
+      <h2 id="titre-bl">Nouveau bon de livraison</h2>
+      <button type="button" class="fermer" data-fermer title="Fermer">×</button>
+    </div>
+    <div class="fenetre-corps" style="grid-template-columns: 1fr">
+      <div>
+        <div class="champs">
+          <label class="champ c4"><span>Client</span><input name="nom" list="liste-clients" required></label>
+          <label class="champ c2"><span>Date de livraison</span><input name="date" type="date"></label>
+          <label class="champ c6"><span>Adresse</span><input name="adresse"></label>
+          <label class="champ c2"><span>Code postal</span><input name="code_postal"></label>
+          <label class="champ c2"><span>Ville</span><input name="ville"></label>
+          <label class="champ c2"><span>E-mail</span><input name="email" type="email"></label>
+          <label class="champ c6"><span>Livrer à une autre adresse <em>(facultatif)</em></span>
+            <input name="livraison_adresse" placeholder="Adresse de livraison si différente"></label>
+          <label class="champ c4"><span>Objet <em>(facultatif)</em></span><input name="objet"></label>
+          <label class="champ c2"><span>Devis d'origine <em>(facultatif)</em></span><input name="devis"></label>
+          <label class="champ c2"><span>N° de commande du client <em>(facultatif)</em></span><input name="commande_client"></label>
+        </div>
+        <div class="defile" style="margin-top: 16px">
+          <table class="tableau" id="lignes-bl">
+            <thead><tr><th>Désignation</th><th>Quantité livrée</th><th>Unité</th><th></th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="actions" style="margin-top: 10px">
+          <button type="button" class="bouton secondaire petit" id="ajouter-ligne-bl">Ajouter une ligne</button>
+        </div>
+        <label class="champ" style="margin-top: 14px"><span>Remarques <em>(imprimées sur le bon)</em></span>
+          <textarea name="notes" rows="2"></textarea></label>
+      </div>
+    </div>
+    <div class="fenetre-pied">
+      <button type="button" class="bouton danger" id="supprimer-bl" hidden>Supprimer</button>
+      <span class="espace"></span>
+      <span class="message erreur" id="erreur-bl"></span>
+      <button type="button" class="bouton secondaire" data-fermer>Annuler</button>
+      <button class="bouton">Enregistrer et voir le PDF</button>
+    </div>
+  </form>
+</dialog>
+<datalist id="liste-clients"></datalist>
+
+<script src="commun.js"></script>
+<script src="livraisons.js"></script>
+</body>
+</html>

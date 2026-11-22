@@ -99,7 +99,7 @@ const pageDeverrouillage = () =>
 const peut = (espace) => !session?.utilisateur || session.utilisateur.admin || session.utilisateur.droits.includes(espace);
 const estAdmin = () => !session?.utilisateur || session.utilisateur.admin;
 // Espace demandé par chaque page (factures.html : Clients ou Fournisseurs, vérifié par la page)
-const ESPACE_PAGE = { "devis.html": "devis", "plateforme.html": "factures_clients", "reception.html": "reception", "stock.html": "stock",
+const ESPACE_PAGE = { "devis.html": "devis", "livraisons.html": "devis", "plateforme.html": "factures_clients", "reception.html": "reception", "stock.html": "stock",
                       "agenda.html": "agenda", "contacts.html": "contacts", "tableau.html": "tableau",
                       "banque.html": "banque" };
 
@@ -354,6 +354,7 @@ const ICONES = {
   plateforme: '<path d="M4 4h16v12H4z"/><path d="M8 20h8M12 16v4M8 9l3 3 5-5"/>',
   banque: '<rect x="2.5" y="5.5" width="19" height="13" rx="2"/><path d="M2.5 10h19M6.5 14.5h4"/>',
   frais: '<path d="M3 10l9-6 9 6M5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 20h18"/>',
+  livraisons: '<path d="M2 7h11v9H2zM13 10h4l3 3v3h-7z"/><circle cx="6" cy="18" r="1.8"/><circle cx="17" cy="18" r="1.8"/>',
   commandes: '<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M9 10h6M9 14h6M9 18h3"/>',
   reception: '<path d="M3 13l3-8h12l3 8v6H3z"/><path d="M3 13h5l1 2h6l1-2h5"/>',
   stock: '<path d="M12 3l9 5v8l-9 5-9-5V8z"/><path d="M3 8l9 5 9-5M12 13v8"/>',
@@ -376,6 +377,7 @@ const OUTILS = [
     vue: "client-avoirs" },
   { page: "factures.html?espace=clients&onglet=relances", nom: "Relances", droit: "relances", icone: "relances",
     vue: "client-relances" },
+  { page: "livraisons.html", nom: "Bons de livraison", droit: "devis", icone: "livraisons" },
   { page: "plateforme.html", nom: "Facture électronique", droit: "factures_clients", icone: "plateforme", vue: "plateforme",
     pastille: "/api/plateforme/a-traiter", rouge: true },
   { section: "Achats" },

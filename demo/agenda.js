@@ -73,7 +73,12 @@ function dessiner() {
       <span>${JOURS[i]}</span><strong>${Number(j.slice(8))}</strong>
     </div>`).join("");
 
-  const taches = jours.map((j) => `<div class="cal-taches-jour">${semaine.taches.filter((t) => t.date === j).map((t) => `
+  const taches = jours.map((j) => `<div class="cal-taches-jour">${semaine.taches.filter((t) => t.date === j).map((t) => t.type === "devis" ? `
+    <a class="tache devis ${t.en_retard ? "retard" : ""}" href="devis.html?devis=${encodeURIComponent(t.devis)}"
+      title="${echapper(t.titre)} (devis ${echapper(t.devis)}, sans réponse) · ${euros(t.montant)}">
+      <span class="tache-icone" aria-hidden="true">↻</span>
+      <span>${echapper(t.titre)}</span><small>${echapper(t.devis)} · ${euros(t.montant)}</small>
+    </a>` : `
     <label class="tache ${t.fait ? "fait" : ""} ${t.en_retard ? "retard" : ""} ${t.type}" title="${echapper(t.titre)} · ${euros(t.montant)}">
       <input type="checkbox" data-facture="${t.facture_id}" data-type="${t.type}" ${t.fait ? "checked" : ""}>
       <span>${echapper(t.titre)}</span><small>${euros(t.montant)}</small>

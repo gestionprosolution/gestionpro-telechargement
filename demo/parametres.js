@@ -170,6 +170,54 @@ $("#form-mon-mdp").addEventListener("submit", async (e) => {
   }
 });
 
+// --- Signature des e-mails : éléments choisis (même ordre que backend/envoi/modeles.py) ----------
+
+const ORDRE_SIGNATURE = ["signataire", "entreprise", "telephone", "email", "adresse"];
+
+function valeurSignature(cle) {
+  const adresse = [(entreprise.adresse || "").replace(/\n/g, ", ").trim(),
+                   `${entreprise.code_postal || ""} ${entreprise.ville || ""}`.trim()].filter(Boolean).join(", ");
+  return { signataire: $("#signataire").value.trim(), entreprise: entreprise.nom, telephone: entreprise.telephone,
+           email: entreprise.email, adresse }[cle] || "";
+}
+
+function elementsSignature() {
+  return $$("#cases-signature input").filter((c) => c.checked).map((c) => c.value);
+}
+
+function apercuSignature() {
+  const choisis = elementsSignature();
+  const lignes = ORDRE_SIGNATURE.filter((c) => choisis.includes(c)).map(valeurSignature).filter(Boolean);
+  $("#apercu-signature").textContent = lignes.length ? lignes.join("\n") : "(aucune signature)";
+}
+
+function chargerSignature() {
+  $("#signataire").value = entreprise.signataire || "";
+  const choisis = entreprise.signature_elements || ["entreprise", "telephone", "email"];
+  $$("#cases-signature input").forEach((c) => (c.checked = choisis.includes(c.value)));
+  apercuSignature();
+}
+
+$("#cases-signature").addEventListener("change", apercuSignature);
+$("#signataire").addEventListener("input", () => {
+  const caseNom = $("#cases-signature input[value=signataire]");
+  if ($("#signataire").value.trim() && !caseNom.dataset.touche) caseNom.checked = true;   // nom saisi : affiché
+  apercuSignature();
+});
+$("#cases-signature input[value=signataire]").addEventListener("change", (e) => (e.target.dataset.touche = "1"));
+$("#enregistrer-signature").addEventListener("click", async () => {
+  const message = $("#message-signature");
+  try {
+    entreprise = await envoyerJson("/api/entreprise", "PUT", { ...(await apiJson("/api/entreprise")),
+      signataire: $("#signataire").value.trim(), signature_elements: elementsSignature() });
+    message.className = "message ok";
+    message.textContent = "Signature enregistrée.";
+  } catch (err) {
+    message.className = "message erreur";
+    message.textContent = err.message;
+  }
+});
+
 // --- Messages envoyés (e-mails proposés) ----------------------------------------------------------
 
 let messages = [], messageEdite = null, champMessage = null;
@@ -471,6 +519,7 @@ $("#chercher-maj").addEventListener("click", async () => {
   } else if (session.mode === "local") {
     $("#messages").hidden = false;
     chargerMessages();
+    chargerSignature();
     $("#licence").hidden = $("#sauvegardes").hidden = $("#utilisateurs").hidden = $("#reseau").hidden = false;
     chargerExterne();
     chargerUtilisateurs();
@@ -484,6 +533,7 @@ $("#chercher-maj").addEventListener("click", async () => {
   } else {
     $("#messages").hidden = false;
     chargerMessages();
+    chargerSignature();
     $("#compte").hidden = false;
     $("#compte-email").textContent = session.email;
     const a = session.abonnement;

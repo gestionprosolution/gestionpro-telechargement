@@ -432,12 +432,14 @@ function afficherHistorique() {
                      envoyer: `<button type="button" class="bouton petit" data-envoyer>Envoyer</button>`,
                      ouvrir: `<a class="bouton secondaire petit" target="_blank" href="${pdf}">Ouvrir</a>` }[principale];
     const menu = [
+      `<a href="${pdf}" download="${echapper(d.numero)}.pdf">Télécharger le PDF</a>`,
       principale !== "ouvrir" && `<a target="_blank" href="${pdf}">Ouvrir le PDF</a>`,
       principale !== "envoyer" && `<button type="button" data-envoyer>${d.envoye_le ? "Envoyer à nouveau" : "Envoyer par e-mail"}</button>`,
       d.modifiable && `<button type="button" data-modifier>Modifier</button>`,
       `<button type="button" data-dupliquer>Dupliquer</button>`,
       d.statut === "accepte" && `<button type="button" data-devis-signe>${d.signe ? "Devis signé…" : "Joindre le devis signé"}</button>`,
       d.statut === "accepte" && `<button type="button" data-commande-client>Bon de commande du client</button>`,
+      d.statut === "accepte" && `<a href="livraisons.html?devis=${encodeURIComponent(d.numero)}">Bon de livraison</a>`,
       `<button type="button" data-photos>Photos${d.photos ? ` (${d.photos})` : ""}</button>`,
       `<hr><button type="button" class="danger" data-supprimer>Supprimer</button>`,
     ].filter(Boolean).join("");

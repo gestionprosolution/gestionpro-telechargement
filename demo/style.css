@@ -752,3 +752,14 @@ details.plus[open] summary { margin-bottom: 14px; }
 /* Devis : case « Dépôt-vente » */
 .case-depot > span { display: flex; align-items: center; gap: 8px; }
 .case-depot .aide { font-style: normal; }
+
+/* Paramètres > Messages : signature des e-mails */
+.signature-reglage h3 { margin: 0 0 4px; font-size: 15px; }
+.cases-signature { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 12px; }
+.cases-signature label { display: flex; align-items: center; gap: 6px; }
+.apercu-signature { margin: 4px 0 0; padding: 8px 12px; background: var(--fond, #f6f6f4); border-radius: 8px; font: inherit; font-size: 13px; white-space: pre-wrap; min-width: 220px; }
+
+/* Agenda : devis à relancer (lien vers le devis) */
+.tache.devis { border-left-color: var(--couleur); text-decoration: none; color: inherit; cursor: pointer; }
+.tache.devis .tache-icone { color: var(--couleur); font-weight: 700; text-align: center; }
+.tache.devis:hover { background: var(--survol, rgba(0,0,0,.04)); }

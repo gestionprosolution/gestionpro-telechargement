@@ -31,6 +31,29 @@
           par e-mail. Tant que vous ne les modifiez pas, GestionPro adapte lui-même le texte à chaque document.
           Vous pouvez toujours retoucher le message avant de l'envoyer.</p></div>
     </div>
+    <div class="signature-reglage">
+      <h3>Signature des e-mails</h3>
+      <p class="aide">Ajoutée à la fin des messages proposés (la variable {signature} dans vos textes). Cochez ce
+        que vous voulez faire apparaître.</p>
+      <div class="champs" style="margin-top: 10px">
+        <label class="champ c3"><span>Votre prénom et nom <em>(facultatif)</em></span>
+          <input id="signataire" placeholder="ex. Marie Dupont"></label>
+      </div>
+      <div class="cases-signature" id="cases-signature">
+        <label><input type="checkbox" value="signataire"> Votre prénom et nom</label>
+        <label><input type="checkbox" value="entreprise"> Nom de l'entreprise</label>
+        <label><input type="checkbox" value="telephone"> Téléphone</label>
+        <label><input type="checkbox" value="email"> E-mail</label>
+        <label><input type="checkbox" value="adresse"> Adresse</label>
+      </div>
+      <div class="actions" style="margin-top: 10px; align-items: flex-start">
+        <div><span class="aide">Aperçu :</span><pre class="apercu-signature" id="apercu-signature"></pre></div>
+        <span class="espace"></span>
+        <span class="message" id="message-signature"></span>
+        <button type="button" class="bouton secondaire petit" id="enregistrer-signature">Enregistrer la signature</button>
+      </div>
+    </div>
+    <hr class="separateur">
     <div id="liste-messages"></div>
   </section>
 
