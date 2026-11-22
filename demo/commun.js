@@ -615,7 +615,7 @@ const MESSAGERIES = {
 };
 
 // Ouvre le message prêt dans la messagerie `service`.
-async function ouvrirMessagerie(service, email, objet, texte) {
+async function ouvrirMessagerie(service, email, objet, texte, compte = "") {
   if (service === "app") {
     const encoder = (s) => encodeURIComponent(s.replace(/\r?\n/g, "\r\n"));
     window.location.href = `mailto:${encodeURIComponent(email)}?subject=${encoder(objet)}&body=${encoder(texte)}`;
@@ -623,7 +623,7 @@ async function ouvrirMessagerie(service, email, objet, texte) {
   }
   // Logiciel installé : le serveur ouvre la page dans le navigateur habituel, où l'on est connecté
   // à sa messagerie (la fenêtre de GestionPro a son propre profil). En ligne : nouvel onglet.
-  const r = await envoyerJson("/api/envoi/ouvrir", "POST", { service, email, objet, texte });
+  const r = await envoyerJson("/api/envoi/ouvrir", "POST", { service, email, objet, texte, compte });
   if (!r.ouvert) window.open(r.url, "_blank", "noopener");
 }
 
@@ -686,6 +686,9 @@ async function ouvrirEnvoi({ titre, modele, marquer, apresEnvoi = () => {} }) {
             </ol>
             <p class="aide" data-ref="deja" style="margin: 8px 0 0"></p>
             <div class="champs" style="margin-top: 14px">
+              <label class="champ c6" data-ref="ligne-compte" hidden><span>Envoyer depuis <em>(votre compte Gmail,
+                si vous en avez plusieurs dans le navigateur ; vide : le compte par défaut)</em></span>
+                <input name="compte" type="email" placeholder="ex. contact@mon-entreprise.fr"></label>
               <label class="champ c6"><span>Destinataire</span><input name="email" type="email" placeholder="adresse@exemple.fr"></label>
               <label class="champ c6"><span>Objet</span><input name="objet"></label>
               <label class="champ c6"><span>Message</span><textarea name="texte" rows="12"></textarea></label>
@@ -730,6 +733,7 @@ async function ouvrirEnvoi({ titre, modele, marquer, apresEnvoi = () => {} }) {
     ref("pdf").download = m.nom_pdf;
   }
   form.elements.email.value = m.email;
+  form.elements.compte.value = entreprise?.compte_gmail || "";
   form.elements.objet.value = m.objet;
   form.elements.texte.value = m.texte;
 
@@ -738,6 +742,7 @@ async function ouvrirEnvoi({ titre, modele, marquer, apresEnvoi = () => {} }) {
   ref("choix").hidden = !!service;
   ref("envoyer").hidden = ref("changer").hidden = !service;
   if (service) ref("envoyer").textContent = MESSAGERIES[service].bouton;
+  ref("ligne-compte").hidden = service !== "gmail";
   ref("changer").onclick = () => { ref("choix").hidden = false; ref("choix").scrollIntoView({ block: "nearest" }); };
 
   async function envoyer(choisi) {
@@ -749,9 +754,13 @@ async function ouvrirEnvoi({ titre, modele, marquer, apresEnvoi = () => {} }) {
     ref("erreur").textContent = "";
     try {
       await retenirMessagerie(choisi);
+      const compte = choisi === "gmail" ? form.elements.compte.value.trim() : "";
+      if (choisi === "gmail" && compte !== (entreprise?.compte_gmail || "")) {   // retenu pour les prochains envois
+        entreprise = await envoyerJson("/api/entreprise", "PUT", { ...entreprise, compte_gmail: compte });
+      }
       if (typeof marquer === "function") await marquer();
       else if (marquer) await api(marquer, { method: "POST" });
-      await ouvrirMessagerie(choisi, email, form.elements.objet.value, form.elements.texte.value);
+      await ouvrirMessagerie(choisi, email, form.elements.objet.value, form.elements.texte.value, compte);
     } catch (err) {
       ref("erreur").textContent = err.message;
       return;

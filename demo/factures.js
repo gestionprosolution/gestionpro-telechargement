@@ -845,7 +845,8 @@ $("#relance-email").addEventListener("click", async () => {
   if (!service) return;
   try {
     await enregistrerRelance();
-    await ouvrirMessagerie(service, email, formRelance.elements.objet.value, formRelance.elements.texte.value);
+    await ouvrirMessagerie(service, email, formRelance.elements.objet.value, formRelance.elements.texte.value,
+                           service === "gmail" ? entreprise?.compte_gmail || "" : "");
   } catch (err) {
     $("#erreur-relance").textContent = err.message;
     return;

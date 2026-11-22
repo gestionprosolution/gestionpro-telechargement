@@ -260,6 +260,7 @@ function lireFormulaire() {
   devis.acompte_pourcent = Number($("#d-acompte").value || 0);
   devis.notes = $("#d-notes").value;
   devis.categorie_operation = $("#d-categorie").value;
+  devis.depot_vente = $("#d-depot").checked;
 }
 
 let minuterie;
@@ -306,6 +307,7 @@ function remplirFormulaire(d, numeroEdite) {
   $("#d-acompte").value = devis.acompte_pourcent || "";
   $("#d-notes").value = devis.notes || "";
   $("#d-categorie").value = devis.categorie_operation || "";
+  $("#d-depot").checked = !!devis.depot_vente;
   $("#d-numero").value = devis.numero;
   $("#d-date").value = devis.date;
   $("#d-validite").value = devis.date_validite;
@@ -421,9 +423,12 @@ function afficherHistorique() {
   $("#historique tbody").innerHTML = liste.map((d, i) => {
     const pdf = `/api/devis/${encodeURIComponent(d.numero)}/pdf`;
     // Une action principale selon l'état du devis ; les autres dans le menu « ⋯ »
-    const principale = d.statut === "accepte" && !d.facture_finale ? "facturer"
+    const principale = d.statut === "accepte" && d.depot_vente ? "releve"
+      : d.statut === "accepte" && !d.facture_finale ? "facturer"
       : d.statut === "en_attente" && !d.envoye_le ? "envoyer" : "ouvrir";
     const bouton = { facturer: `<button type="button" class="bouton petit" data-facturer>Facturer</button>`,
+                     releve: `<a class="bouton petit" href="stock.html?releve=${encodeURIComponent(d.client)}"
+                       title="Dépôt-vente : on facture les exemplaires vendus, après le relevé de ventes">Relevé de ventes</a>`,
                      envoyer: `<button type="button" class="bouton petit" data-envoyer>Envoyer</button>`,
                      ouvrir: `<a class="bouton secondaire petit" target="_blank" href="${pdf}">Ouvrir</a>` }[principale];
     const menu = [
@@ -449,7 +454,7 @@ function afficherHistorique() {
     <tr data-numero="${echapper(d.numero)}">
       <td><strong>${echapper(d.numero)}</strong><div class="secondaire">${dateFr(d.date)}</div></td>
       <td><strong>${echapper(d.client)}</strong>
-        ${d.objet ? `<div class="secondaire">${echapper(d.objet)}</div>` : ""}
+        ${d.objet || d.depot_vente ? `<div class="secondaire">${d.depot_vente ? "<strong>Dépôt-vente</strong>" : ""}${d.objet && d.depot_vente ? " · " : ""}${echapper(d.objet)}</div>` : ""}
         ${documents.length ? `<div class="secondaire documents-devis">${documents.join(" · ")}</div>` : ""}</td>
       <td class="droite nombre"><strong>${euros(d.total_ttc)}</strong></td>
       <td><select data-statut class="choix-statut">

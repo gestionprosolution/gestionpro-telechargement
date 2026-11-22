@@ -748,3 +748,7 @@ details.plus[open] summary { margin-bottom: 14px; }
   .onglets, .sous-onglets { overflow-x: auto; gap: 18px; scrollbar-width: none; }
   .onglets button, .sous-onglets button { white-space: nowrap; flex: none; }
 }
+
+/* Devis : case « Dépôt-vente » */
+.case-depot > span { display: flex; align-items: center; gap: 8px; }
+.case-depot .aide { font-style: normal; }
