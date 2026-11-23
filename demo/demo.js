@@ -3,7 +3,7 @@
 // (outils_vendeur/demo_web.py), bloque toute modification et fige la date de la démonstration.
 "use strict";
 (() => {
-  const MAINTENANT = 1795374752983;                       // date des données enregistrées (ms)
+  const MAINTENANT = 1795430209369;                       // date des données enregistrées (ms)
   const TELECHARGER = "../index.html#telecharger";
 
   // --- Date figée : l'agenda, les retards et les échéances restent cohérents avec les données ------------

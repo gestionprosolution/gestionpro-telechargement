@@ -146,7 +146,7 @@ function monterFormulaireEntreprise(conteneur) {
 let attenteLicence = null;
 // E-mail au vendeur à chaque demande (Web3Forms, même service que le formulaire du site : son offre gratuite
 // n'accepte que les envois faits depuis une page, d'où l'envoi ici et non par le relais). Sans effet si hors ligne.
-const CLE_WEB3FORMS = "0fc3ec8b-8e07-4ad9-80be-9730cf5767da";
+const CLE_WEB3FORMS = "6bad4211-e8ad-4822-98e1-16125a3688d5";
 
 function prevenirVendeur(d) {
   fetch("https://api.web3forms.com/submit", {
@@ -229,8 +229,8 @@ function monterBlocLicence(conteneur, surChangement = () => {}) {
           automatiquement. La licence est liée à l'ordinateur principal du bureau : faites cette demande depuis
           celui-ci ; les autres ordinateurs le rejoignent sans licence.</p>
         <p class="aide">En envoyant cette demande, vous acceptez les
-          <a href="https://gestionprosolution.github.io/gestionpro-telechargement/cgv.html" target="_blank">conditions générales de vente</a>. Ce que deviennent ces
-          informations : <a href="https://gestionprosolution.github.io/gestionpro-telechargement/confidentialite.html" target="_blank">vos données personnelles</a>.</p>
+          <a href="https://gestionpro-solution.fr/cgv.html" target="_blank">conditions générales de vente</a>. Ce que deviennent ces
+          informations : <a href="https://gestionpro-solution.fr/confidentialite.html" target="_blank">vos données personnelles</a>.</p>
         <div class="actions"><button class="bouton">Envoyer ma demande</button></div>
         <p class="message erreur" id="erreur-demande" hidden></p>
       </form>`;
