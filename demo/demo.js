@@ -3,7 +3,7 @@
 // (outils_vendeur/demo_web.py), bloque toute modification et fige la date de la démonstration.
 "use strict";
 (() => {
-  const MAINTENANT = 1795430209369;                       // date des données enregistrées (ms)
+  const MAINTENANT = 1795547043377;                       // date des données enregistrées (ms)
   const TELECHARGER = "../index.html#telecharger";
 
   // --- Date figée : l'agenda, les retards et les échéances restent cohérents avec les données ------------
@@ -139,7 +139,8 @@
     const c = (x) => Math.round(Number(x || 0) * 100);       // centimes
     const arrondi = (x) => Math.round(x + 1e-9);
     const lignes = devis.lignes || [];
-    const lignesHt = lignes.map((l) => arrondi(Number(l.quantite || 0) * c(l.prix_unitaire_ht)));
+    const lignesHt = lignes.map((l) => arrondi(Number(l.quantite || 0) * c(l.prix_unitaire_ht)
+      * (1 - Number(l.remise_pourcent || 0) / 100)));
     const brut = lignesHt.reduce((a, b) => a + b, 0);
     const tauxRemise = Number(devis.remise_pourcent || 0) / 100;
     const remise = arrondi(brut * tauxRemise);

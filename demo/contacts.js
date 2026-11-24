@@ -31,7 +31,7 @@ const initiale = (nom) => {
 function afficher() {
   const q = filtre.q.toLowerCase();
   const visibles = contacts.filter((c) => c.type === filtre.type && (!q ||
-    `${c.nom} ${c.personne} ${c.ville} ${c.telephone} ${c.email}`.toLowerCase().includes(q)));
+    `${c.nom} ${c.personne} ${c.ville} ${c.telephone} ${c.email} ${c.etiquettes || ""} ${c.instagram || ""}`.toLowerCase().includes(q)));
 
   // Regroupement alphabétique (sans tenir compte de « M. », « SARL »…)
   const groupes = {};
@@ -113,6 +113,7 @@ function ouvrir(contact = null) {
     else champ.value = valeurs[champ.name] ?? "";
   }
   $("#titre-fiche").textContent = contact ? contact.nom : "Nouveau contact";
+  afficherLiens(contact);
   $("#date-consentements").textContent = contact?.consentements_le
     ? `Consentements notés ou modifiés le ${dateFr(contact.consentements_le)}.` : "";
   $("#supprimer").hidden = !contact;
@@ -184,3 +185,23 @@ $("#photos-contact").addEventListener("click", () => {
     ouvrir(cible);
   }
 })();
+
+// Liens cliquables vers le site et les réseaux sociaux du contact (ouverts dans le navigateur)
+function lienReseau(valeur, base) {
+  const v = (valeur || "").trim();
+  if (!v) return "";
+  if (/^https?:\/\//i.test(v)) return v;
+  if (/^[\w.-]+\.[a-z]{2,}(\/|$)/i.test(v)) return `https://${v}`;
+  return base + v.replace(/^@/, "");
+}
+function afficherLiens(contact) {
+  const liens = contact ? [
+    ["Site internet", lienReseau(contact.site_web, "https://")],
+    ["Instagram", lienReseau(contact.instagram, "https://www.instagram.com/")],
+    ["Facebook", lienReseau(contact.facebook, "https://www.facebook.com/")],
+    ["LinkedIn", lienReseau(contact.linkedin, "https://www.linkedin.com/in/")],
+  ].filter(([, url]) => url) : [];
+  $("#liens-contact").innerHTML = liens.map(([nom, url]) =>
+    `<a class="lien" href="${echapper(url)}" target="_blank" rel="noopener">${nom} ↗</a>`).join(" · ");
+  $("#liens-contact").hidden = !liens.length;
+}

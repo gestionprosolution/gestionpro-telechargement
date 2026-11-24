@@ -57,7 +57,8 @@ async function chargerClients() {
 const tauxTva = () => (entreprise.franchise_tva ? 0 : Number($("#d-tva").value || 0));
 
 function nouvelleLigne() {
-  return { designation: "", description: "", quantite: 1, unite: "u", prix_unitaire_ht: 0, taux_tva: tauxTva(), article_id: "" };
+  return { designation: "", description: "", quantite: 1, unite: "u", prix_unitaire_ht: 0, taux_tva: tauxTva(), article_id: "",
+           remise_pourcent: 0 };
 }
 
 function champ(ligne, cle, type, attributs = {}) {
@@ -214,6 +215,8 @@ function afficherLignes() {
     cellule(unite, "unite");
 
     cellule(champ(ligne, "prix_unitaire_ht", "number", { step: "0.01", min: 0, placeholder: "0,00" }), "num");
+    // Remise propre à la ligne (en %), en plus de la remise globale du devis
+    cellule(champ(ligne, "remise_pourcent", "number", { step: "any", min: 0, max: 100, placeholder: "0" }), "num remise-ligne");
 
     const total = document.createElement("span");
     cellule(total, "total nombre");

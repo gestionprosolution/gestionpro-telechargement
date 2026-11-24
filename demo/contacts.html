@@ -14,6 +14,9 @@
   <header class="entete-page">
     <div><h1>Contacts</h1><p>Vos clients et fournisseurs. Ceux de vos devis et factures sont ajoutés automatiquement.</p></div>
     <span class="actions">
+      <a class="bouton secondaire" href="/api/export/contacts.xlsx" download
+        title="Tous vos clients et fournisseurs dans un fichier Excel, avec un onglet des clients qui acceptent la newsletter">
+        Exporter (Excel)</a>
       <button type="button" class="bouton secondaire" id="copier-newsletter"
         title="Les e-mails des clients qui acceptent la newsletter et le catalogue, à coller dans votre messagerie">
         Copier les e-mails (newsletter)</button>
@@ -28,7 +31,7 @@
     </nav>
     <div class="barre-outils">
       <span class="aide" id="resume-liste"></span>
-      <input type="search" id="recherche" placeholder="Rechercher un nom, une ville, un téléphone…">
+      <input type="search" id="recherche" placeholder="Rechercher un nom, une ville, un téléphone, une étiquette…">
     </div>
     <div id="annuaire"></div>
     <p class="vide" id="vide" hidden></p>
@@ -60,6 +63,13 @@
           <label class="champ"><span>N° de TVA intracommunautaire</span><input name="tva_intracom"></label>
           <label class="champ c6 case"><input name="professionnel" type="checkbox"> Client professionnel (entreprise) :
             ses factures sont à déposer sur la plateforme de facture électronique</label>
+          <label class="champ c3"><span>Site internet</span><input name="site_web" type="url" placeholder="https://…"></label>
+          <label class="champ c3"><span>Instagram</span><input name="instagram" placeholder="@compte ou lien"></label>
+          <label class="champ c3"><span>Facebook</span><input name="facebook" placeholder="Page ou lien"></label>
+          <label class="champ c3"><span>LinkedIn</span><input name="linkedin" placeholder="Profil ou lien"></label>
+          <label class="champ c6"><span>Étiquettes <em>(séparées par des virgules : salon 2026, VIP, libraire…)</em></span>
+            <input name="etiquettes" placeholder="Pour retrouver et trier vos contacts, et cibler vos envois"></label>
+          <div class="champ c6 liens-contact" id="liens-contact" hidden></div>
           <fieldset class="champ c6 consentements">
             <legend>Consentements (RGPD)</legend>
             <label class="case"><input name="consent_donnees" type="checkbox"> Accepte l'enregistrement de ses

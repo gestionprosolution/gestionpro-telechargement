@@ -769,3 +769,7 @@ details.plus[open] summary { margin-bottom: 14px; }
 /* Fiche contact : consentements RGPD */
 .consentements { border: 1px solid var(--bord); border-radius: 10px; padding: 8px 14px 10px; display: grid; gap: 6px; }
 .consentements legend { font-weight: 600; font-size: 13px; padding: 0 4px; }
+
+/* Devis : remise par ligne */
+#lignes td.remise-ligne input { width: 70px; }
+.liens-contact { display: flex; gap: 10px; flex-wrap: wrap; font-size: 13px; }
